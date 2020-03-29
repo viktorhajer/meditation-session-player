@@ -1,0 +1,76 @@
+<audio #audioElement autoplay></audio>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Meditation Session Player</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div padding id="app-section" [class.small]="!!currentFile">
+    <img src="/assets/icon/meditation-icon.jpg" [class.small]="!!currentFile">
+    <h2 id="app-title" [class.small]="!!currentFile">{{ !!currentFile ? currentFile?.file?.name : 'Hari OM!' }}</h2>
+  </div>
+  <ion-list *ngIf="files.length" mode="ios">
+    <ion-list-header>
+      <ion-col size="8" class="ion-justify-content-start">
+        Number of sessions: {{files.length}}
+      </ion-col>
+      <ion-col class="ion-justify-content-end">
+        <ion-icon name="shuffle-outline" (click)="pickRandomSession()"></ion-icon>
+      </ion-col>
+      <ion-col class="ion-justify-content-end">
+        <ion-icon color="primary" name="notifications-circle-outline" class="ring" *ngIf="ringing" (click)="ringing = false"></ion-icon>
+        <ion-icon color="medium" name="notifications-off-circle-outline" class="ring" *ngIf="!ringing" (click)="ringing = true"></ion-icon>
+      </ion-col>
+    </ion-list-header>
+    <ion-item *ngFor="let file of files; let i = index" text-wrap (click)="openSession(file, i)" color="{{ currentFile?.index === i ? 'light' : ''}}">
+      <ion-col size="1" class="ion-justify-content-start">
+        <ion-icon color="primary" name="musical-note"></ion-icon>
+      </ion-col>
+      <ion-col size="8" class="ion-justify-content-start">
+        <p>{{ file.name }}</p>
+      </ion-col>
+      <ion-col *ngIf="currentFile?.index === i" class="ion-justify-content-end">
+        <p class="selected-label">SELECTED</p>
+      </ion-col>
+      <ion-col *ngIf="currentFile?.index !== i" class="ion-justify-content-end">
+        <ion-icon name="play"></ion-icon>
+      </ion-col>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer *ngIf="!!currentFile" [@showHide]="displayFooter">
+  <ion-toolbar color="primary">
+    <ion-range min="0" color="light" [max]="getDurationSec()" (ionChange)="onSeekChange($event)" [pin]="true" [debounce]="100">
+      <ion-label color="light" slot="start">{{ getCurrentTime() }}</ion-label>
+      <ion-label color="light" slot="end">{{ getDuration() }}</ion-label>
+    </ion-range>
+  </ion-toolbar>
+
+  <ion-toolbar color="primary" padding>
+    <ion-grid>
+      <ion-row class="ion-align-items-center" id="media-controls">
+        <ion-col class="ion-justify-content-center">
+          <ion-button fill="clear" [disabled]="isFirstPlaying()" (click)="previous()">
+            <ion-icon color="light" name="play-skip-back"></ion-icon>
+          </ion-button>
+        </ion-col>
+        <ion-col class="ion-justify-content-center" *ngIf="this.audioElement.paused">
+          <ion-button fill="clear" (click)="audioElement.play()">
+            <ion-icon color="light" name="play"></ion-icon>
+          </ion-button>
+        </ion-col>
+        <ion-col class="ion-justify-content-center" *ngIf="!this.audioElement.paused">
+          <ion-button fill="clear" (click)="audioElement.pause()">
+            <ion-icon color="light" name="pause"></ion-icon>
+          </ion-button>
+        </ion-col>
+        <ion-col class="ion-justify-content-center">
+          <ion-button fill="clear" (click)="next()" [disabled]="isLastPlaying()">
+            <ion-icon color="light" name="play-skip-forward"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-footer>
