@@ -2,6 +2,8 @@ import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {LoadingController, ModalController} from '@ionic/angular';
 import {SettingsPage} from './components/settings.page';
+import {SettingsService} from '../services/settings.service';
+import {NotificationType} from '../models/notification.model';
 
 @Component({
   selector: 'app-player',
@@ -31,28 +33,40 @@ import {SettingsPage} from './components/settings.page';
 export class PlayerPage implements AfterViewInit {
 
   @ViewChild('audioElement', {static: false}) private audioElementRef: ElementRef;
+  @ViewChild('ringingElement', {static: false}) private ringingElementRef: ElementRef;
   files: { name: string, url: string }[] = [];
   currentFile: { index: number, file: { name: string, url: string } } = null;
   displayFooter = 'inactive';
-  alarm = 0;
-  repeat = false;
-  speed = false;
+  notification = NotificationType;
   private indexHistory = [];
   private loadingModal: Promise<HTMLIonLoadingElement>;
   private seekTimeout: any;
 
-  constructor(private loadingCtrl: LoadingController, private modalController: ModalController) {
+  constructor(private loadingCtrl: LoadingController,
+              private modalController: ModalController,
+              public settingsService: SettingsService) {
     this.getDocuments();
   }
 
   ngAfterViewInit() {
-    this.audioElement.addEventListener('timeupdate', () => 0);
-    this.audioElement.addEventListener('ended', () => {
-      if (this.isLastPlaying() || !this.repeat) {
-        this.resetState();
-      } else {
-        this.next();
+    this.audioElement.addEventListener('timeupdate', () => {
+      const range = document.querySelector('ion-range');
+      if (!!range && !range.classList.contains('range-pressed')) {
+        if (Math.abs((range.value as any) - this.audioElement.currentTime) > 2) {
+          this.audioElement.currentTime = range.value as any;
+        } else {
+          range.value = this.audioElement.currentTime;
+        }
       }
+    });
+    this.audioElement.addEventListener('ended', () => {
+      this.playNotification().then(() => {
+        if (this.isLastPlaying() || !this.settingsService.isRepeatEnabled()) {
+          this.resetState();
+        } else {
+          this.next();
+        }
+      });
     });
   }
 
@@ -75,7 +89,10 @@ export class PlayerPage implements AfterViewInit {
       this.pushIndexHistory(index);
       this.currentFile = {index, file};
       this.audioElement.src = '/assets/' + this.currentFile.file.url;
-      this.audioElement.play().then(() => this.displayFooter = 'active');
+      this.audioElement.play().then(() => {
+        this.displayFooter = 'active';
+        this.setSpeed();
+      });
       const range = document.querySelector('ion-range');
       if (!!range) {
         range.value = 0;
@@ -89,10 +106,6 @@ export class PlayerPage implements AfterViewInit {
       random = Math.floor(Math.random() * this.files.length);
     }
     this.openSession(this.files[random], random);
-  }
-
-  get audioElement(): HTMLAudioElement {
-    return this.audioElementRef.nativeElement as HTMLAudioElement;
   }
 
   next() {
@@ -137,23 +150,42 @@ export class PlayerPage implements AfterViewInit {
     return this.audioElement.duration;
   }
 
-  toggleAlarm() {
-    this.alarm = (this.alarm + 1) % 3;
-  }
-
   toggleSpeed() {
-    this.speed = !this.speed;
-    if (this.speed) {
-      this.audioElement.playbackRate = 1.1;
-    } else {
-      this.audioElement.playbackRate = 1;
-    }
+    this.settingsService.toggleSpeed();
+    this.setSpeed();
   }
 
   openSettings() {
     this.modalController.create({
       component: SettingsPage
     }).then(modal => modal.present());
+  }
+
+  get audioElement(): HTMLAudioElement {
+    return this.audioElementRef.nativeElement as HTMLAudioElement;
+  }
+
+  get ringingElement(): HTMLAudioElement {
+    return this.ringingElementRef.nativeElement as HTMLAudioElement;
+  }
+
+  private playNotification(): Promise<void> {
+    if (this.settingsService.settings.notificationIndex === NotificationType.RINGING) {
+      this.ringingElement.src = this.settingsService.getSelectedRingTone().url;
+      this.ringingElement.play();
+      return new Promise((resolve) => {
+        setTimeout(resolve, 1500);
+      });
+    }
+    return Promise.resolve();
+  }
+
+  private setSpeed() {
+    if (this.settingsService.isSpeedEnabled()) {
+      this.audioElement.playbackRate = 1.1;
+    } else {
+      this.audioElement.playbackRate = 1;
+    }
   }
 
   private resetState() {
