@@ -11,7 +11,6 @@ export class SettingsPage {
   }
 
   dismiss() {
-    console.log(1);
     this.modalCtrl.dismiss();
   }
 }
