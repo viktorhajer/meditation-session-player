@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {LoadingController} from '@ionic/angular';
+import {LoadingController, ModalController} from '@ionic/angular';
+import {SettingsPage} from './components/settings.page';
 
 @Component({
   selector: 'app-player',
@@ -40,7 +41,7 @@ export class PlayerPage implements AfterViewInit {
   private loadingModal: Promise<HTMLIonLoadingElement>;
   private seekTimeout: any;
 
-  constructor(private loadingCtrl: LoadingController, private ref: ElementRef) {
+  constructor(private loadingCtrl: LoadingController, private modalController: ModalController) {
     this.getDocuments();
   }
 
@@ -147,6 +148,12 @@ export class PlayerPage implements AfterViewInit {
     } else {
       this.audioElement.playbackRate = 1;
     }
+  }
+
+  openSettings() {
+    this.modalController.create({
+      component: SettingsPage
+    }).then(modal => modal.present());
   }
 
   private resetState() {

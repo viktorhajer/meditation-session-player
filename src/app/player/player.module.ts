@@ -4,6 +4,7 @@ import {IonicModule} from '@ionic/angular';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {PlayerPage} from './player.page';
+import {SettingsPage} from './components/settings.page';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import {PlayerPage} from './player.page';
       }
     ])
   ],
-  declarations: [PlayerPage]
+  declarations: [PlayerPage, SettingsPage],
+  entryComponents: [SettingsPage]
 })
 export class PlayerModule {
 }
