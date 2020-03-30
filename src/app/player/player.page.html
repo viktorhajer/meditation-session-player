@@ -1,25 +1,34 @@
 <audio #audioElement autoplay></audio>
+<audio id="ring-audio-element" src="/assets/ring.mp3"></audio>
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Meditation Session Player</ion-title>
+    <ion-buttons slot="end">
+      <ion-icon name="options-outline"></ion-icon>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div padding id="app-section" [class.small]="!!currentFile">
+  <div padding id="app-section" [class.small]="!!currentFile" (click)="pickRandomSession()">
     <img src="/assets/icon/meditation-icon.jpg" [class.small]="!!currentFile">
     <h2 id="app-title" [class.small]="!!currentFile">{{ !!currentFile ? currentFile?.file?.name : 'Hari OM!' }}</h2>
   </div>
   <ion-list *ngIf="files.length" mode="ios">
     <ion-list-header>
-      <ion-col size="8" class="ion-justify-content-start">
-        Number of sessions: {{files.length}}
+      <ion-col size="7" class="ion-justify-content-start">
+        No. of sessions: {{files.length}}
       </ion-col>
-      <ion-col class="ion-justify-content-end">
-        <ion-icon name="shuffle-outline" (click)="pickRandomSession()"></ion-icon>
+      <ion-col class="ion-justify-content-center">
+        <ion-icon name="repeat-outline" (click)="repeat = !repeat" color="{{ repeat ? 'primary' : 'medium'}}"></ion-icon>
       </ion-col>
-      <ion-col class="ion-justify-content-end">
-        <ion-icon color="primary" name="notifications-circle-outline" class="ring" *ngIf="ringing" (click)="ringing = false"></ion-icon>
-        <ion-icon color="medium" name="notifications-off-circle-outline" class="ring" *ngIf="!ringing" (click)="ringing = true"></ion-icon>
+      <ion-col class="ion-justify-content-center">
+        <ion-icon color="primary" name="notifications-circle-outline" class="ring" *ngIf="alarm === 1" (click)="toggleAlarm()"></ion-icon>
+        <ion-icon color="primary" name="radio-outline" class="ring" *ngIf="alarm === 2" (click)="toggleAlarm()"></ion-icon>
+        <ion-icon color="medium" name="notifications-off-circle-outline" class="ring" *ngIf="alarm === 0" (click)="toggleAlarm()"></ion-icon>
+      </ion-col>
+      <ion-col class="ion-justify-content-center">
+        <ion-icon name="flash-outline" (click)="toggleSpeed()" color="{{ speed ? 'primary' : 'medium'}}" *ngIf="speed"></ion-icon>
+        <ion-icon name="flash-off-outline" (click)="toggleSpeed()" color="{{ speed ? 'primary' : 'medium'}}" *ngIf="!speed"></ion-icon>
       </ion-col>
     </ion-list-header>
     <ion-item *ngFor="let file of files; let i = index" text-wrap (click)="openSession(file, i)" color="{{ currentFile?.index === i ? 'light' : ''}}">
@@ -27,7 +36,7 @@
         <ion-icon color="primary" name="musical-note"></ion-icon>
       </ion-col>
       <ion-col size="8" class="ion-justify-content-start">
-        <p>{{ file.name }}</p>
+        <p class="file-name">{{ file.name }}</p>
       </ion-col>
       <ion-col *ngIf="currentFile?.index === i" class="ion-justify-content-end">
         <p class="selected-label">SELECTED</p>
@@ -57,12 +66,12 @@
         </ion-col>
         <ion-col class="ion-justify-content-center" *ngIf="this.audioElement.paused">
           <ion-button fill="clear" (click)="audioElement.play()">
-            <ion-icon color="light" name="play"></ion-icon>
+            <ion-icon class="main-button" color="light" name="play"></ion-icon>
           </ion-button>
         </ion-col>
         <ion-col class="ion-justify-content-center" *ngIf="!this.audioElement.paused">
           <ion-button fill="clear" (click)="audioElement.pause()">
-            <ion-icon color="light" name="pause"></ion-icon>
+            <ion-icon class="main-button" color="light" name="pause"></ion-icon>
           </ion-button>
         </ion-col>
         <ion-col class="ion-justify-content-center">

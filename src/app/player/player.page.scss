@@ -1,17 +1,13 @@
 ion-list-header {
   color: #d0297b;
-  text-transform: uppercase;
   font-size: 0.75rem;
   align-items: center;
   border-bottom: 1px solid #ccc;
+  margin-top: 15px;
 
   ion-icon {
     font-size: 2rem;
-    &.ring {
-      margin-right: 10px;
-    }
   }
-
 }
 
 #app-section {
@@ -53,14 +49,24 @@ ion-list-header {
 ion-icon {
   font-size: 1rem;
 }
+ion-header {
+  ion-icon {
+    font-size: 2rem;
+    margin-right: 10px;
+  }
+}
 
 .selected-label {
   font-size: 0.7rem;
 }
 
+.file-name {
+  font-size: 0.85rem;
+}
+
 #media-controls {
   ion-icon {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 }
 

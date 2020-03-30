@@ -30,10 +30,12 @@ import {LoadingController} from '@ionic/angular';
 export class PlayerPage implements AfterViewInit {
 
   @ViewChild('audioElement', {static: false}) private audioElementRef: ElementRef;
-  files: {name: string, url: string}[] = [];
-  currentFile: {index: number, file: {name: string, url: string}} = null;
+  files: { name: string, url: string }[] = [];
+  currentFile: { index: number, file: { name: string, url: string } } = null;
   displayFooter = 'inactive';
-  ringing = true;
+  alarm = 0;
+  repeat = false;
+  speed = false;
   private indexHistory = [];
   private loadingModal: Promise<HTMLIonLoadingElement>;
   private seekTimeout: any;
@@ -43,7 +45,14 @@ export class PlayerPage implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.audioElement.addEventListener('timeupdate', () => {});
+    this.audioElement.addEventListener('timeupdate', () => 0);
+    this.audioElement.addEventListener('ended', () => {
+      if (this.isLastPlaying() || !this.repeat) {
+        this.resetState();
+      } else {
+        this.next();
+      }
+    });
   }
 
   getDocuments() {
@@ -60,8 +69,7 @@ export class PlayerPage implements AfterViewInit {
     this.audioElement.pause();
     this.audioElement.currentTime = 0;
     if (!!this.currentFile && this.currentFile.index === index) {
-      this.currentFile = null;
-      this.displayFooter = 'inactive';
+      this.resetState();
     } else {
       this.pushIndexHistory(index);
       this.currentFile = {index, file};
@@ -126,6 +134,24 @@ export class PlayerPage implements AfterViewInit {
 
   getDurationSec(): number {
     return this.audioElement.duration;
+  }
+
+  toggleAlarm() {
+    this.alarm = (this.alarm + 1) % 3;
+  }
+
+  toggleSpeed() {
+    this.speed = !this.speed;
+    if (this.speed) {
+      this.audioElement.playbackRate = 1.1;
+    } else {
+      this.audioElement.playbackRate = 1;
+    }
+  }
+
+  private resetState() {
+    this.currentFile = null;
+    this.displayFooter = 'inactive';
   }
 
   private presentLoading() {
