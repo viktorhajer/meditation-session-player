@@ -1,9 +1,28 @@
 import {Injectable} from '@angular/core';
 import {SettingsModel} from '../models/settings.model';
 import {RingToneModel} from '../models/ringTone.model';
-import {BACKGROUND_MUSIC_LIST, RING_TONE_LIST, THEME_LIST} from '../player/components/settings.page';
 
 const APPLICATION_KEY = 'MeditationPlayerSettings';
+
+export const RING_TONE_LIST = [
+  {url: '/assets/ringTones/cell-phone-beep.mp3', name: 'Cell Phone Beep'},
+  {url: '/assets/ringTones/cell-phone-vibrate.mp3', name: 'Cell Phone Vibrate'},
+  {url: '/assets/ringTones/china-bell-ring.mp3', name: 'China Bell Ring'}
+];
+
+export const BACKGROUND_MUSIC_LIST = [
+  {url: '/assets/music_example.mp3', name: 'Cell Phone Beep'}
+];
+
+export const THEME_LIST: { title: string, className: string }[] = [
+  {title: 'Sahasrara', className: 'purple'},
+  {title: 'Vishuddha', className: 'pink'},
+  {title: 'Ajna', className: 'blue'},
+  {title: 'Anahata', className: 'green'},
+  {title: 'Manipura', className: 'yellow'},
+  {title: 'Swadhisthana', className: 'orange'},
+  {title: 'Muladhara', className: 'black-red'},
+];
 
 @Injectable({providedIn: 'root'})
 export class SettingsService {

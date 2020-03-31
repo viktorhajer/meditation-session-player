@@ -13,6 +13,6 @@ export class SettingsModel {
               public restartMusic = false,
               public repeat = 0,
               public speed = 0,
-              public themeIndex = 0) {
+              public themeIndex = 2) {
   }
 }

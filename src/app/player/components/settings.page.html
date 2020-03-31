@@ -10,7 +10,7 @@
 </ion-header>
 <ion-content fullscreen>
   <ion-list>
-    <ion-list-header color="light">General</ion-list-header>
+    <ion-list-header color="medium">General</ion-list-header>
     <ion-item>
       <ion-label>Theme</ion-label>
       <ion-select [(ngModel)]="themeIndex" (ionChange)="changedThemeIndex()" interface="popover">
@@ -19,11 +19,7 @@
       </ion-select>
     </ion-item>
 
-    <ion-list-header color="light">Notification</ion-list-header>
-    <ion-item>
-      <ion-label>Notification enabled</ion-label>
-      <ion-toggle [(ngModel)]="notificationEnabled" (ionChange)="changedNotificationEnabled()"></ion-toggle>
-    </ion-item>
+    <ion-list-header color="medium">Notification</ion-list-header>
     <ion-item>
       <ion-label>Notification Type</ion-label>
       <ion-select [(ngModel)]="notificationType" (ionChange)="changedNotificationType()" interface="popover">
@@ -34,43 +30,46 @@
     </ion-item>
     <ion-item>
       <ion-label>Ring Tone</ion-label>
-      <ion-select [(ngModel)]="ringToneIndex" (ionChange)="changedRingToneIndex()" interface="popover">
+      <ion-select [disabled]="notificationType === 1" [(ngModel)]="ringToneIndex" (ionChange)="changedRingToneIndex()" interface="popover">
         <ion-select-option *ngFor="let ringTone of settings.getRingTones(), let i = index"
                            [value]="i">{{ringTone.name}}</ion-select-option>
       </ion-select>
     </ion-item>
-
-    <ion-list-header color="light">Timer</ion-list-header>
+    <ion-item>
+      <ion-label>End sign enabled</ion-label>
+      <ion-toggle [(ngModel)]="notificationEnabled" (ionChange)="changedNotificationEnabled()"></ion-toggle>
+    </ion-item>
     <ion-item>
       <ion-label>Timer enabled</ion-label>
       <ion-toggle [(ngModel)]="timerEnabled" (ionChange)="changedTimerEnabled()"></ion-toggle>
     </ion-item>
     <ion-item>
-      <ion-label>Interval (min)</ion-label>
-      <ion-input [(ngModel)]="timerInterval" (ionChange)="changedTimerInterval()" placeholder="Enter comma separated list, eg. 1,12"></ion-input>
+      <ion-label>Interval (secs)</ion-label>
+      <ion-input [disabled]="!timerEnabled" [(ngModel)]="timerInterval" (ionChange)="changedTimerInterval()"
+                 placeholder="Enter comma separated list, eg. 60,30"></ion-input>
     </ion-item>
 
-    <ion-list-header color="light">Background Music</ion-list-header>
+    <ion-list-header color="medium">Background Music</ion-list-header>
     <ion-item>
       <ion-label>Music enabled</ion-label>
       <ion-toggle [(ngModel)]="musicEnabled" (ionChange)="changedMusicEnabled()"></ion-toggle>
     </ion-item>
     <ion-item>
       <ion-label>Music</ion-label>
-      <ion-select [(ngModel)]="musicIndex" (ionChange)="changedMusicIndex()" interface="popover">
+      <ion-select [disabled]="!musicEnabled" [(ngModel)]="musicIndex" (ionChange)="changedMusicIndex()" interface="popover">
         <ion-select-option *ngFor="let music of settings.getBackgroundMusics(), let i = index"
                            [value]="i">{{music.name}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-label>Volume</ion-label>
-      <ion-range (ionChange)="changedMusicVolume()" [(ngModel)]="musicVolume"
+      <ion-range [disabled]="!musicEnabled" (ionChange)="changedMusicVolume()" [(ngModel)]="musicVolume"
                  [snaps]="true" [min]="10" [max]="100" [pin]="true" [debounce]="500" [step]="10">
       </ion-range>
     </ion-item>
     <ion-item>
       <ion-label>Music restarts</ion-label>
-      <ion-toggle [(ngModel)]="restartMusic" (ionChange)="changedRestartMusic()"></ion-toggle>
+      <ion-toggle [disabled]="!musicEnabled" [(ngModel)]="restartMusic" (ionChange)="changedRestartMusic()"></ion-toggle>
     </ion-item>
   </ion-list>
 </ion-content>

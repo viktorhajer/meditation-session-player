@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
-import {SettingsService} from './settings.service';
+import {BACKGROUND_MUSIC_LIST, SettingsService} from './settings.service';
 import {RingToneModel} from '../models/ringTone.model';
-import {BACKGROUND_MUSIC_LIST, RING_TONE_LIST} from '../player/components/settings.page';
 
 @Injectable({providedIn: 'root'})
 export class BackgroundMusicService {

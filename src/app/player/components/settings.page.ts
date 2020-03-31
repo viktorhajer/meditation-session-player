@@ -2,30 +2,12 @@ import {Component} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {SettingsService} from '../../services/settings.service';
 import {BackgroundMusicService} from '../../services/background-music.service';
-
-export const RING_TONE_LIST = [
-  {url: '/assets/ringTones/cell-phone-beep.mp3', name: 'Cell Phone Beep'},
-  {url: '/assets/ringTones/cell-phone-vibrate.mp3', name: 'Cell Phone Vibrate'},
-  {url: '/assets/ringTones/china-bell-ring.mp3', name: 'China Bell Ring'}
-];
-
-export const BACKGROUND_MUSIC_LIST = [
-  {url: '/assets/music_example.mp3', name: 'Cell Phone Beep'}
-];
-
-export const THEME_LIST: { title: string, className: string }[] = [
-  {title: 'Sahasrara', className: 'purple'},
-  {title: 'Vishuddha', className: 'pink'},
-  {title: 'Ajna', className: 'blue'},
-  {title: 'Anahata', className: 'green'},
-  {title: 'Manipura', className: 'yellow'},
-  {title: 'Swadhisthana', className: 'orange'},
-  {title: 'Muladhara', className: 'black-red'},
-];
+import {NotificationService} from '../../services/notification.service';
 
 @Component({
   selector: 'app-settings-page',
-  templateUrl: './settings.page.html'
+  templateUrl: './settings.page.html',
+  styleUrls: ['./settings.page.scss']
 })
 export class SettingsPage {
 
@@ -42,6 +24,7 @@ export class SettingsPage {
 
   constructor(private modalCtrl: ModalController,
               private settings: SettingsService,
+              private notification: NotificationService,
               public bgMusic: BackgroundMusicService) {
     this.notificationEnabled = this.settings.settings.notificationEnabled;
     this.notificationType = this.settings.settings.notificationType;
@@ -68,10 +51,12 @@ export class SettingsPage {
   }
 
   changedTimerEnabled() {
+    this.notification.resetInterval();
     this.settings.setTimerEnabled(this.timerEnabled);
   }
 
   changedTimerInterval() {
+    this.notification.resetInterval();
     const interval = this.timerInterval.split(',')
       .map(parts => parts.trim()).filter(p => !isNaN(Number(p))).map(p => Number(p));
     this.settings.setTimerInterval(interval);

@@ -5,6 +5,8 @@ import {SettingsPage} from './components/settings.page';
 import {SettingsService} from '../services/settings.service';
 import {NotificationService} from '../services/notification.service';
 import {BackgroundMusicService} from '../services/background-music.service';
+import {SessionService} from '../services/session.service';
+import {Session} from '../models/session.model';
 
 @Component({
   selector: 'app-player',
@@ -37,7 +39,7 @@ export class PlayerPage implements AfterViewInit {
   @ViewChild('ringingElement', {static: false}) private ringingElementRef: ElementRef;
   @ViewChild('musicElement', {static: false}) private musicElementRef: ElementRef;
 
-  files: { name: string, url: string }[] = [];
+  sessions: Session[] = [];
   currentFile: { index: number, file: { name: string, url: string } } = null;
   displayFooter = 'inactive';
   private indexHistory = [];
@@ -48,6 +50,7 @@ export class PlayerPage implements AfterViewInit {
               private modalController: ModalController,
               private notification: NotificationService,
               private bgMusic: BackgroundMusicService,
+              private sessionService: SessionService,
               public settingsService: SettingsService) {
     this.getDocuments();
   }
@@ -80,12 +83,11 @@ export class PlayerPage implements AfterViewInit {
 
   getDocuments() {
     this.presentLoading();
-    this.files = [
-      {name: 'Open The Window Of Your Heart - Meditation.mp3', url: 'ringTones/china-bell-ring.mp3'},
-      {name: 'OM AKHAND - Healing Power of OM.mp3', url: 'ringTones/china-bell-ring.mp3'},
-      {name: 'Meditation To Release Inner Tension.mpg3', url: 'ringTones/china-bell-ring.mp3'}
-    ];
-    setTimeout(() => this.dismissLoading(), 500);
+    this.sessionService.getSessions()
+      .then(sessions => {
+        this.sessions = sessions;
+        this.dismissLoading();
+      });
   }
 
   openSession(file, index) {
@@ -111,11 +113,11 @@ export class PlayerPage implements AfterViewInit {
   }
 
   pickRandomSession() {
-    let random = Math.floor(Math.random() * this.files.length);
+    let random = Math.floor(Math.random() * this.sessions.length);
     while (this.indexHistory.indexOf(random) !== -1) {
-      random = Math.floor(Math.random() * this.files.length);
+      random = Math.floor(Math.random() * this.sessions.length);
     }
-    this.openSession(this.files[random], random);
+    this.openSession(this.sessions[random], random);
   }
 
   play() {
@@ -130,13 +132,13 @@ export class PlayerPage implements AfterViewInit {
 
   next() {
     const index = this.currentFile.index + 1;
-    const file = this.files[index];
+    const file = this.sessions[index];
     this.openSession(file, index);
   }
 
   previous() {
     const index = this.currentFile.index - 1;
-    const file = this.files[index];
+    const file = this.sessions[index];
     this.openSession(file, index);
   }
 
@@ -145,7 +147,7 @@ export class PlayerPage implements AfterViewInit {
   }
 
   isLastPlaying(): boolean {
-    return this.currentFile.index === this.files.length - 1;
+    return this.currentFile.index === this.sessions.length - 1;
   }
 
   onSeekChange(event) {
@@ -239,8 +241,8 @@ export class PlayerPage implements AfterViewInit {
 
   private pushIndexHistory(index: number) {
     this.indexHistory.push(index);
-    if (this.indexHistory.length > (this.files.length - 1)) {
-      this.indexHistory = this.indexHistory.slice(Math.floor(this.files.length / 2));
+    if (this.indexHistory.length > (this.sessions.length - 1)) {
+      this.indexHistory = this.indexHistory.slice(Math.floor(this.sessions.length / 2));
     }
   }
 }
