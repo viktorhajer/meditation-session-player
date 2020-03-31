@@ -1,14 +1,9 @@
 import {Injectable} from '@angular/core';
 import {SettingsModel} from '../models/settings.model';
 import {RingToneModel} from '../models/ringTone.model';
+import {BACKGROUND_MUSIC_LIST, RING_TONE_LIST, THEME_LIST} from '../player/components/settings.page';
 
 const APPLICATION_KEY = 'MeditationPlayerSettings';
-
-const RING_TONES = [
-  {url: '/assets/ringTones/cell-phone-beep.mp3', name: 'Cell Phone Beep'},
-  {url: '/assets/ringTones/cell-phone-vibrate.mp3', name: 'Cell Phone Vibrate'},
-  {url: '/assets/ringTones/china-bell-ring.mp3', name: 'China Bell Ring'}
-];
 
 @Injectable({providedIn: 'root'})
 export class SettingsService {
@@ -19,28 +14,75 @@ export class SettingsService {
     const data = localStorage.getItem(APPLICATION_KEY);
     if (data) {
       this.settings = JSON.parse(data);
+      this.setThemeIndex();
+    } else {
+      this.setThemeIndex(0);
     }
-    console.log(this.settings);
   }
 
   getRingTones(): RingToneModel[] {
-    return RING_TONES;
+    return RING_TONE_LIST;
   }
 
-  getSelectedRingTone(): RingToneModel {
-    console.log(RING_TONES);
-    console.log(this.settings.ringToneIndex);
-    console.log(RING_TONES[this.settings.ringToneIndex]);
-    return RING_TONES[this.settings.ringToneIndex];
+  getBackgroundMusics(): RingToneModel[] {
+    return BACKGROUND_MUSIC_LIST;
   }
 
-  setRingToneIndex(ringToneIndex = 0) {
-    this.settings.ringToneIndex = ringToneIndex;
+  getThemes(): { title: string, className: string }[] {
+    return THEME_LIST;
+  }
+
+  setRingToneIndex(value = 0) {
+    this.settings.ringToneIndex = value;
     this.saveSettings();
   }
 
-  toggleNotification() {
-    this.settings.notificationIndex = (this.settings.notificationIndex + 1) % 3;
+  setNotificationEnabled(flag = true) {
+    this.settings.notificationEnabled = flag;
+    this.saveSettings();
+  }
+
+  setNotificationType(value = 0) {
+    this.settings.notificationType = value;
+    this.saveSettings();
+  }
+
+  setTimerEnabled(flag = true) {
+    this.settings.timerEnabled = flag;
+    this.saveSettings();
+  }
+
+  setTimerInterval(interval = []) {
+    this.settings.timerInterval = interval;
+    this.saveSettings();
+  }
+
+  setMusicEnabled(enabled = true) {
+    this.settings.musicEnabled = enabled;
+    this.saveSettings();
+  }
+
+  setMusicIndex(value = 0) {
+    this.settings.musicIndex = value;
+    this.saveSettings();
+  }
+
+  setMusicVolume(value = 100) {
+    this.settings.musicVolume = value;
+    this.saveSettings();
+  }
+
+  setRestartMusic(flag = true) {
+    this.settings.restartMusic = flag;
+    this.saveSettings();
+  }
+
+  setThemeIndex(value?: number) {
+    if (!!value || value === 0) {
+      this.settings.themeIndex = value;
+    }
+    document.body.classList.value = '';
+    document.body.classList.toggle(this.getSelectedThemeClass());
     this.saveSettings();
   }
 
@@ -60,6 +102,10 @@ export class SettingsService {
   toggleSpeed() {
     this.settings.speed = (this.settings.speed + 1) % 2;
     this.saveSettings();
+  }
+
+  private getSelectedThemeClass(): string {
+    return THEME_LIST[this.settings.themeIndex].className;
   }
 
   private saveSettings() {

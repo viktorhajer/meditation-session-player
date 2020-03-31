@@ -3,7 +3,8 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 import {LoadingController, ModalController} from '@ionic/angular';
 import {SettingsPage} from './components/settings.page';
 import {SettingsService} from '../services/settings.service';
-import {NotificationType} from '../models/notification.model';
+import {NotificationService} from '../services/notification.service';
+import {BackgroundMusicService} from '../services/background-music.service';
 
 @Component({
   selector: 'app-player',
@@ -34,25 +35,31 @@ export class PlayerPage implements AfterViewInit {
 
   @ViewChild('audioElement', {static: false}) private audioElementRef: ElementRef;
   @ViewChild('ringingElement', {static: false}) private ringingElementRef: ElementRef;
+  @ViewChild('musicElement', {static: false}) private musicElementRef: ElementRef;
+
   files: { name: string, url: string }[] = [];
   currentFile: { index: number, file: { name: string, url: string } } = null;
   displayFooter = 'inactive';
-  notification = NotificationType;
   private indexHistory = [];
   private loadingModal: Promise<HTMLIonLoadingElement>;
   private seekTimeout: any;
 
   constructor(private loadingCtrl: LoadingController,
               private modalController: ModalController,
+              private notification: NotificationService,
+              private bgMusic: BackgroundMusicService,
               public settingsService: SettingsService) {
     this.getDocuments();
   }
 
   ngAfterViewInit() {
+    this.notification.setAudioElement(this.ringingElementRef.nativeElement as HTMLAudioElement);
+    this.bgMusic.setAudioElement(this.musicElementRef.nativeElement as HTMLAudioElement);
     this.audioElement.addEventListener('timeupdate', () => {
       const range = document.querySelector('ion-range');
       if (!!range && !range.classList.contains('range-pressed')) {
-        if (Math.abs((range.value as any) - this.audioElement.currentTime) > 2) {
+        const diff = Math.abs((range.value as any) - Math.floor(this.audioElement.currentTime));
+        if (diff > 2) {
           this.audioElement.currentTime = range.value as any;
         } else {
           range.value = this.audioElement.currentTime;
@@ -60,10 +67,11 @@ export class PlayerPage implements AfterViewInit {
       }
     });
     this.audioElement.addEventListener('ended', () => {
-      this.playNotification().then(() => {
+      this.notification.ring().then(() => {
         if (this.isLastPlaying() || !this.settingsService.isRepeatEnabled()) {
           this.resetState();
         } else {
+          this.bgMusic.stop();
           this.next();
         }
       });
@@ -73,9 +81,9 @@ export class PlayerPage implements AfterViewInit {
   getDocuments() {
     this.presentLoading();
     this.files = [
-      {name: 'Open The Window Of Your Heart - Meditation.mp3', url: 'example.mp3'},
-      {name: 'OM AKHAND - Healing Power of OM.mp3', url: 'example.mp3'},
-      {name: 'Meditation To Release Inner Tension.mpg3', url: 'example.mp3'}
+      {name: 'Open The Window Of Your Heart - Meditation.mp3', url: 'ringTones/china-bell-ring.mp3'},
+      {name: 'OM AKHAND - Healing Power of OM.mp3', url: 'ringTones/china-bell-ring.mp3'},
+      {name: 'Meditation To Release Inner Tension.mpg3', url: 'ringTones/china-bell-ring.mp3'}
     ];
     setTimeout(() => this.dismissLoading(), 500);
   }
@@ -97,6 +105,8 @@ export class PlayerPage implements AfterViewInit {
       if (!!range) {
         range.value = 0;
       }
+      this.notification.startInterval();
+      this.bgMusic.play();
     }
   }
 
@@ -106,6 +116,16 @@ export class PlayerPage implements AfterViewInit {
       random = Math.floor(Math.random() * this.files.length);
     }
     this.openSession(this.files[random], random);
+  }
+
+  play() {
+    this.audioElement.play();
+    this.bgMusic.play();
+  }
+
+  pause() {
+    this.audioElement.pause();
+    this.bgMusic.pause();
   }
 
   next() {
@@ -129,13 +149,16 @@ export class PlayerPage implements AfterViewInit {
   }
 
   onSeekChange(event) {
-    if (this.seekTimeout) {
-      clearTimeout(this.seekTimeout);
-      this.seekTimeout = null;
+    const range = document.querySelector('ion-range');
+    if (!!range && range.classList.contains('range-pressed')) {
+      if (this.seekTimeout) {
+        clearTimeout(this.seekTimeout);
+        this.seekTimeout = null;
+      }
+      this.seekTimeout = setTimeout(() => {
+        this.audioElement.currentTime = event.detail.value;
+      }, 300);
     }
-    this.seekTimeout = setTimeout(() => {
-      this.audioElement.currentTime = event.detail.value;
-    }, 300);
   }
 
   getCurrentTime(): string {
@@ -158,26 +181,14 @@ export class PlayerPage implements AfterViewInit {
   openSettings() {
     this.modalController.create({
       component: SettingsPage
-    }).then(modal => modal.present());
+    }).then(modal => {
+      this.pause();
+      modal.present();
+    });
   }
 
   get audioElement(): HTMLAudioElement {
     return this.audioElementRef.nativeElement as HTMLAudioElement;
-  }
-
-  get ringingElement(): HTMLAudioElement {
-    return this.ringingElementRef.nativeElement as HTMLAudioElement;
-  }
-
-  private playNotification(): Promise<void> {
-    if (this.settingsService.settings.notificationIndex === NotificationType.RINGING) {
-      this.ringingElement.src = this.settingsService.getSelectedRingTone().url;
-      this.ringingElement.play();
-      return new Promise((resolve) => {
-        setTimeout(resolve, 1500);
-      });
-    }
-    return Promise.resolve();
   }
 
   private setSpeed() {
@@ -191,6 +202,8 @@ export class PlayerPage implements AfterViewInit {
   private resetState() {
     this.currentFile = null;
     this.displayFooter = 'inactive';
+    this.notification.resetInterval();
+    this.bgMusic.stop();
   }
 
   private presentLoading() {

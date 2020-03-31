@@ -1,5 +1,7 @@
 {
   "name": "meditation-session-player",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

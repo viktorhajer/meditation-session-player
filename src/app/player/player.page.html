@@ -1,43 +1,28 @@
 <audio #audioElement autoplay></audio>
 <audio #ringingElement></audio>
+<audio #musicElement loop></audio>
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Meditation Session Player</ion-title>
+    <ion-title color="light">Meditation Session Player</ion-title>
     <ion-buttons slot="end">
-      <ion-icon name="options-outline" (click)="openSettings()"></ion-icon>
+      <ion-icon name="options-outline" (click)="openSettings()" color="light"></ion-icon>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div padding id="app-section" [class.small]="!!currentFile" (click)="pickRandomSession()">
+  <div padding id="app-section" [class.small]="!!currentFile">
     <img src="/assets/icon/meditation-icon.jpg" [class.small]="!!currentFile">
     <h2 id="app-title" [class.small]="!!currentFile">{{ !!currentFile ? currentFile?.file?.name : 'Hari OM!' }}</h2>
   </div>
   <ion-list *ngIf="files.length" mode="ios">
     <ion-list-header>
-      <ion-col size="7" class="ion-justify-content-start">
+      <ion-col size="8" class="ion-justify-content-start">
         No. of sessions: {{files.length}}
       </ion-col>
-      <ion-col class="ion-justify-content-center">
+      <ion-col class="ion-justify-content-end">
         <ion-icon name="repeat-outline" (click)="settingsService.toggleRepeat()"
                   color="{{ settingsService.isRepeatEnabled() ? 'primary' : 'medium'}}"></ion-icon>
-      </ion-col>
-      <ion-col class="ion-justify-content-center">
-        <ion-icon color="primary" name="notifications-circle-outline" class="ring"
-                  *ngIf="settingsService.settings.notificationIndex === notification.RINGING"
-                  (click)="settingsService.toggleNotification()"></ion-icon>
-        <ion-icon color="primary" name="radio-outline" class="ring"
-                  *ngIf="settingsService.settings.notificationIndex === notification.VIBRATION"
-                  (click)="settingsService.toggleNotification()"></ion-icon>
-        <ion-icon color="medium" name="notifications-off-circle-outline" class="ring"
-                  *ngIf="settingsService.settings.notificationIndex === notification.NONE"
-                  (click)="settingsService.toggleNotification()"></ion-icon>
-      </ion-col>
-      <ion-col class="ion-justify-content-center">
-        <ion-icon name="flash-outline" (click)="toggleSpeed()" color="primary"
-                  *ngIf="settingsService.isSpeedEnabled()"></ion-icon>
-        <ion-icon name="flash-off-outline" (click)="toggleSpeed()" color="medium"
-                  *ngIf="!settingsService.isSpeedEnabled()"></ion-icon>
+        <ion-icon name="play-circle-outline"  (click)="pickRandomSession()"></ion-icon>
       </ion-col>
     </ion-list-header>
     <ion-item *ngFor="let file of files; let i = index" text-wrap (click)="openSession(file, i)" color="{{ currentFile?.index === i ? 'light' : ''}}">
@@ -58,7 +43,7 @@
 </ion-content>
 
 <ion-footer *ngIf="!!currentFile" [@showHide]="displayFooter">
-  <ion-toolbar color="primary">
+  <ion-toolbar color="secondary">
     <ion-range min="0" color="light" [max]="getDurationSec()" (ionChange)="onSeekChange($event)" [pin]="true" [debounce]="200">
       <ion-label color="light" slot="start">{{ getCurrentTime() }}</ion-label>
       <ion-label color="light" slot="end">{{ getDuration() }}</ion-label>
@@ -74,12 +59,12 @@
           </ion-button>
         </ion-col>
         <ion-col class="ion-justify-content-center" *ngIf="this.audioElement.paused">
-          <ion-button fill="clear" (click)="audioElement.play()">
+          <ion-button fill="clear" (click)="play()">
             <ion-icon class="main-button" color="light" name="play"></ion-icon>
           </ion-button>
         </ion-col>
         <ion-col class="ion-justify-content-center" *ngIf="!this.audioElement.paused">
-          <ion-button fill="clear" (click)="audioElement.pause()">
+          <ion-button fill="clear" (click)="pause()">
             <ion-icon class="main-button" color="light" name="pause"></ion-icon>
           </ion-button>
         </ion-col>

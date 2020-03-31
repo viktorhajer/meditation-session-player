@@ -1,5 +1,5 @@
 export enum NotificationType {
   RINGING,
   VIBRATION,
-  NONE
+  RINGING_AND_VIBRATION
 }
