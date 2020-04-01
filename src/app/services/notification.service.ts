@@ -3,13 +3,16 @@ import {RingToneModel} from '../models/ringTone.model';
 import {RING_TONE_LIST, SettingsService} from './settings.service';
 import {NotificationType} from '../models/notification.model';
 import {Vibration} from '@ionic-native/vibration/ngx';
+import {DateHelper} from './date.helper';
 
 @Injectable({providedIn: 'root'})
 export class NotificationService {
 
   private audioElement: HTMLAudioElement;
   private timer: number;
+  private timerStarted = 0;
   private timerIndex = 0;
+  countdownText = '';
 
   constructor(private settingsService: SettingsService,
               private vibration: Vibration) {
@@ -26,12 +29,13 @@ export class NotificationService {
   }
 
   startInterval() {
-    if (this.settingsService.settings.timerEnabled) {
+    if (this.isTimerEnabled()) {
       if (this.timerIndex !== 0) {
         this.playNotification().then(() => this.vibrateDevice());
       }
       const list = this.settingsService.settings.timerInterval;
       if (this.timerIndex < list.length) {
+        this.timerStarted = Date.now();
         this.timer = setTimeout(() => {
           this.timerIndex++;
           this.startInterval();
@@ -46,6 +50,25 @@ export class NotificationService {
     clearTimeout(this.timer);
     this.timer = null;
     this.timerIndex = 0;
+    this.timerStarted = 0;
+  }
+
+  isTimerActive(): boolean {
+    return this.timer != null;
+  }
+
+  refreshCountdownText() {
+    if (!this.timerStarted) {
+      this.countdownText = '';
+    }
+    const diff1 = this.settingsService.settings.timerInterval.length - this.timerIndex;
+    const diff2 = this.settingsService.settings.timerInterval[this.timerIndex] -
+      Math.floor((Date.now() - this.timerStarted) / 1000);
+    this.countdownText = DateHelper.formatTime(diff2) + ` (${diff1})`;
+  }
+
+  private isTimerEnabled(): boolean {
+    return this.settingsService.settings.timerEnabled && this.settingsService.settings.timerInterval.length > 0;
   }
 
   private getSelectedRingTone(): RingToneModel {

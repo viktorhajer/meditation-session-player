@@ -4,10 +4,18 @@ ion-list-header {
   align-items: center;
   border-bottom: 1px solid var(--ion-color-medium);
   margin-top: 15px;
+  padding-left: 10px;
 
   ion-icon {
     font-size: 2rem;
     margin: 0 10px;
+  }
+
+  .information-line {
+    ion-icon {
+      font-size: 1.5rem;
+      margin: 0 5px;
+    }
   }
 }
 
@@ -63,6 +71,17 @@ ion-header {
 
 .selected-label {
   font-size: 0.7rem;
+  align-items: center;
+  display: flex;
+  text-align: right;
+
+  ion-icon {
+    margin-left: 5px;
+  }
+  img {
+    width: 20px;
+    margin: 0 5px;
+  }
 }
 
 .file-name {

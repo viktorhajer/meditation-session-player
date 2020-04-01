@@ -1,8 +1,9 @@
 import {Component} from '@angular/core';
-import {ModalController} from '@ionic/angular';
+import {AlertController, ModalController} from '@ionic/angular';
 import {SettingsService} from '../../services/settings.service';
 import {BackgroundMusicService} from '../../services/background-music.service';
 import {NotificationService} from '../../services/notification.service';
+import {HELP} from '../../models/help.model';
 
 @Component({
   selector: 'app-settings-page',
@@ -25,6 +26,7 @@ export class SettingsPage {
   constructor(private modalCtrl: ModalController,
               private settings: SettingsService,
               private notification: NotificationService,
+              private alertController: AlertController,
               public bgMusic: BackgroundMusicService) {
     this.notificationEnabled = this.settings.settings.notificationEnabled;
     this.notificationType = this.settings.settings.notificationType;
@@ -83,6 +85,10 @@ export class SettingsPage {
 
   changedThemeIndex() {
     this.settings.setThemeIndex(this.themeIndex);
+  }
+
+  showHelp(subHeader = '', messageKey = '') {
+    this.alertController.create({header: 'Information', subHeader, message: HELP[messageKey]}).then(t => t.present());
   }
 
   dismiss() {

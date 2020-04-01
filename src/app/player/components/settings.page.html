@@ -19,9 +19,9 @@
       </ion-select>
     </ion-item>
 
-    <ion-list-header color="medium">Notification</ion-list-header>
+    <ion-list-header color="medium">Alarm</ion-list-header>
     <ion-item>
-      <ion-label>Notification Type</ion-label>
+      <ion-label>Alarm Type</ion-label>
       <ion-select [(ngModel)]="notificationType" (ionChange)="changedNotificationType()" interface="popover">
         <ion-select-option [value]="0">Ringing</ion-select-option>
         <ion-select-option [value]="1">Vibration</ion-select-option>
@@ -68,7 +68,10 @@
       </ion-range>
     </ion-item>
     <ion-item>
-      <ion-label>Music restarts</ion-label>
+      <ion-label (click)="showHelp('Music restarts', 'music_restart')">
+        Music restarts
+        <ion-icon name="help"  class="help-icon"></ion-icon>
+      </ion-label>
       <ion-toggle [disabled]="!musicEnabled" [(ngModel)]="restartMusic" (ionChange)="changedRestartMusic()"></ion-toggle>
     </ion-item>
   </ion-list>

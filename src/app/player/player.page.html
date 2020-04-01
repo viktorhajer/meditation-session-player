@@ -10,39 +10,51 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div padding id="app-section" [class.small]="!!currentFile">
-    <img src="/assets/icon/meditation-icon.jpg" [class.small]="!!currentFile">
-    <h2 id="app-title" [class.small]="!!currentFile">{{ !!currentFile ? currentFile?.file?.name : 'Hari OM!' }}</h2>
+  <div padding id="app-section" [class.small]="!!currentSession" (click)="pickRandomSession()">
+    <img src="/assets/icon/meditation-icon.jpg" [class.small]="!!currentSession">
+    <h2 id="app-title" [class.small]="!!currentSession">{{ !!currentSession ? currentSession?.name : 'Hari OM!' }}</h2>
   </div>
   <ion-list *ngIf="sessions.length" mode="ios">
     <ion-list-header>
-      <ion-col size="8" class="ion-justify-content-start">
+      <ion-col size="8" class="ion-justify-content-start ion-align-items-center information-line">
         No. of sessions: {{sessions.length}}
+        <ng-container *ngIf="notification.isTimerActive()">| <ion-icon name="alarm-sharp"></ion-icon> {{notification.countdownText}}</ng-container>
       </ion-col>
       <ion-col class="ion-justify-content-end">
         <ion-icon name="repeat-outline" (click)="settingsService.toggleRepeat()"
                   color="{{ settingsService.isRepeatEnabled() ? 'primary' : 'medium'}}"></ion-icon>
-        <ion-icon name="play-circle-outline"  (click)="pickRandomSession()"></ion-icon>
+        <ion-icon name="chevron-down-outline" *ngIf="sessionService.isAscendingOrder()"
+                  (click)="changeSessionListOrder()"></ion-icon>
+        <ion-icon name="chevron-up-outline" *ngIf="!sessionService.isAscendingOrder()"
+                  (click)="changeSessionListOrder()"></ion-icon>
       </ion-col>
     </ion-list-header>
-    <ion-item *ngFor="let file of sessions; let i = index" text-wrap (click)="openSession(file, i)" color="{{ currentFile?.index === i ? 'light' : ''}}">
-      <ion-col size="1" class="ion-justify-content-start">
-        <ion-icon color="primary" name="musical-note"></ion-icon>
+    <ion-item *ngFor="let session of sessions; let i = index" text-wrap
+              color="{{ currentSession?.id === session.id ? 'light' : ''}}">
+      <ion-col size="1" class="ion-justify-content-start" (click)="likeSession(session)">
+        <ion-icon color="secondary" name="bookmark" *ngIf="session.liked"></ion-icon>
+        <ion-icon name="bookmark-outline" *ngIf="!session.liked"></ion-icon>
       </ion-col>
-      <ion-col size="8" class="ion-justify-content-start">
-        <p class="file-name">{{ file.name }}</p>
+      <ion-col size="8" class="ion-justify-content-start" (click)="openSession(session)">
+        <p class="file-name">{{ session.name }}</p>
       </ion-col>
-      <ion-col *ngIf="currentFile?.index === i" class="ion-justify-content-end">
-        <p class="selected-label">SELECTED</p>
+      <ion-col *ngIf="currentSession?.id === session.id" class="ion-justify-content-end" (click)="openSession(session)">
+        <p class="selected-label">
+          <label>SELECTED <br> {{getCurrentTime()}}</label>
+          <img src="/assets/anim.gif">
+        </p>
       </ion-col>
-      <ion-col *ngIf="currentFile?.index !== i" class="ion-justify-content-end">
-        <ion-icon name="play"></ion-icon>
+      <ion-col *ngIf="currentSession?.id !== session.id" class="ion-justify-content-end" (click)="openSession(session)">
+        <p class="selected-label">
+          {{ session.duration }}
+          <ion-icon name="play"></ion-icon>
+        </p>
       </ion-col>
     </ion-item>
   </ion-list>
 </ion-content>
 
-<ion-footer *ngIf="!!currentFile" [@showHide]="displayFooter">
+<ion-footer *ngIf="!!currentSession" [@showHide]="displayFooter">
   <ion-toolbar color="secondary">
     <ion-range min="0" color="light" [max]="getDurationSec()" (ionChange)="onSeekChange($event)" [pin]="true" [debounce]="200">
       <ion-label color="light" slot="start">{{ getCurrentTime() }}</ion-label>
@@ -54,7 +66,7 @@
     <ion-grid>
       <ion-row class="ion-align-items-center" id="media-controls">
         <ion-col class="ion-justify-content-center">
-          <ion-button fill="clear" [disabled]="isFirstPlaying()" (click)="previous()">
+          <ion-button fill="clear" (click)="previous()">
             <ion-icon color="light" name="play-skip-back"></ion-icon>
           </ion-button>
         </ion-col>
@@ -69,7 +81,7 @@
           </ion-button>
         </ion-col>
         <ion-col class="ion-justify-content-center">
-          <ion-button fill="clear" (click)="next()" [disabled]="isLastPlaying()">
+          <ion-button fill="clear" (click)="next()">
             <ion-icon color="light" name="play-skip-forward"></ion-icon>
           </ion-button>
         </ion-col>

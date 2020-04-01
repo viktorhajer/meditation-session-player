@@ -7,6 +7,7 @@ import {NotificationService} from '../services/notification.service';
 import {BackgroundMusicService} from '../services/background-music.service';
 import {SessionService} from '../services/session.service';
 import {Session} from '../models/session.model';
+import {DateHelper} from '../services/date.helper';
 
 @Component({
   selector: 'app-player',
@@ -40,24 +41,25 @@ export class PlayerPage implements AfterViewInit {
   @ViewChild('musicElement', {static: false}) private musicElementRef: ElementRef;
 
   sessions: Session[] = [];
-  currentFile: { index: number, file: { name: string, url: string } } = null;
+  currentSession: Session;
   displayFooter = 'inactive';
-  private indexHistory = [];
+  private sessionHistory = [];
   private loadingModal: Promise<HTMLIonLoadingElement>;
   private seekTimeout: any;
 
   constructor(private loadingCtrl: LoadingController,
               private modalController: ModalController,
-              private notification: NotificationService,
               private bgMusic: BackgroundMusicService,
-              private sessionService: SessionService,
+              public sessionService: SessionService,
+              public notification: NotificationService,
               public settingsService: SettingsService) {
-    this.getDocuments();
+    this.refreshDocuments();
   }
 
   ngAfterViewInit() {
     this.notification.setAudioElement(this.ringingElementRef.nativeElement as HTMLAudioElement);
     this.bgMusic.setAudioElement(this.musicElementRef.nativeElement as HTMLAudioElement);
+
     this.audioElement.addEventListener('timeupdate', () => {
       const range = document.querySelector('ion-range');
       if (!!range && !range.classList.contains('range-pressed')) {
@@ -68,7 +70,9 @@ export class PlayerPage implements AfterViewInit {
           range.value = this.audioElement.currentTime;
         }
       }
+      this.notification.refreshCountdownText();
     });
+
     this.audioElement.addEventListener('ended', () => {
       this.notification.ring().then(() => {
         if (this.isLastPlaying() || !this.settingsService.isRepeatEnabled()) {
@@ -81,24 +85,15 @@ export class PlayerPage implements AfterViewInit {
     });
   }
 
-  getDocuments() {
-    this.presentLoading();
-    this.sessionService.getSessions()
-      .then(sessions => {
-        this.sessions = sessions;
-        this.dismissLoading();
-      });
-  }
-
-  openSession(file, index) {
+  openSession(session: Session) {
     this.audioElement.pause();
     this.audioElement.currentTime = 0;
-    if (!!this.currentFile && this.currentFile.index === index) {
+    if (!!this.currentSession && this.currentSession.id === session.id) {
       this.resetState();
     } else {
-      this.pushIndexHistory(index);
-      this.currentFile = {index, file};
-      this.audioElement.src = '/assets/' + this.currentFile.file.url;
+      this.pushIndexHistory(session.id);
+      this.currentSession = session;
+      this.audioElement.src = '/assets/' + this.currentSession.url;
       this.audioElement.play().then(() => {
         this.displayFooter = 'active';
         this.setSpeed();
@@ -112,12 +107,22 @@ export class PlayerPage implements AfterViewInit {
     }
   }
 
+  likeSession(session: Session) {
+    this.settingsService.toggleFavorite(session.id);
+    this.refreshDocuments();
+  }
+
   pickRandomSession() {
     let random = Math.floor(Math.random() * this.sessions.length);
-    while (this.indexHistory.indexOf(random) !== -1) {
+    while (this.sessionHistory.indexOf(random) !== -1) {
       random = Math.floor(Math.random() * this.sessions.length);
     }
-    this.openSession(this.sessions[random], random);
+    this.openSession(this.sessions[random]);
+  }
+
+  changeSessionListOrder() {
+    this.sessionService.toggleOrder();
+    this.refreshDocuments();
   }
 
   play() {
@@ -131,23 +136,19 @@ export class PlayerPage implements AfterViewInit {
   }
 
   next() {
-    const index = this.currentFile.index + 1;
-    const file = this.sessions[index];
-    this.openSession(file, index);
+    let index = this.sessions.indexOf(this.currentSession) + 1;
+    if (index >= this.sessions.length) {
+      index = 0;
+    }
+    this.openSession(this.sessions[index]);
   }
 
   previous() {
-    const index = this.currentFile.index - 1;
-    const file = this.sessions[index];
-    this.openSession(file, index);
-  }
-
-  isFirstPlaying(): boolean {
-    return this.currentFile.index === 0;
-  }
-
-  isLastPlaying(): boolean {
-    return this.currentFile.index === this.sessions.length - 1;
+    let index = this.sessions.indexOf(this.currentSession) - 1;
+    if (index < 0) {
+      index = this.sessions.length - 1;
+    }
+    this.openSession(this.sessions[index]);
   }
 
   onSeekChange(event) {
@@ -164,11 +165,11 @@ export class PlayerPage implements AfterViewInit {
   }
 
   getCurrentTime(): string {
-    return this.formatTime(this.audioElement.currentTime);
+    return DateHelper.formatTime(this.audioElement.currentTime);
   }
 
   getDuration(): string {
-    return this.formatTime(this.audioElement.duration);
+    return DateHelper.formatTime(this.audioElement.duration);
   }
 
   getDurationSec(): number {
@@ -193,6 +194,19 @@ export class PlayerPage implements AfterViewInit {
     return this.audioElementRef.nativeElement as HTMLAudioElement;
   }
 
+  private refreshDocuments() {
+    this.presentLoading();
+    this.sessionService.getSessions()
+      .then(sessions => {
+        this.sessions = sessions;
+        this.dismissLoading();
+      });
+  }
+
+  private isLastPlaying(): boolean {
+    return this.sessions.indexOf(this.currentSession) === (this.sessions.length - 1);
+  }
+
   private setSpeed() {
     if (this.settingsService.isSpeedEnabled()) {
       this.audioElement.playbackRate = 1.1;
@@ -202,7 +216,7 @@ export class PlayerPage implements AfterViewInit {
   }
 
   private resetState() {
-    this.currentFile = null;
+    this.currentSession = null;
     this.displayFooter = 'inactive';
     this.notification.resetInterval();
     this.bgMusic.stop();
@@ -226,23 +240,10 @@ export class PlayerPage implements AfterViewInit {
     return this.loadingModal;
   }
 
-  private formatTime(time: number): string {
-    if (!time) {
-      return '00:00';
-    }
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time - minutes * 60);
-    return this.formatTimePart(minutes) + ':' + this.formatTimePart(seconds);
-  }
-
-  private formatTimePart(value: number): string {
-    return (value >= 10 ? '' : '0') + value;
-  }
-
   private pushIndexHistory(index: number) {
-    this.indexHistory.push(index);
-    if (this.indexHistory.length > (this.sessions.length - 1)) {
-      this.indexHistory = this.indexHistory.slice(Math.floor(this.sessions.length / 2));
+    this.sessionHistory.push(index);
+    if (this.sessionHistory.length > (this.sessions.length - 1)) {
+      this.sessionHistory = this.sessionHistory.slice(Math.floor(this.sessions.length / 2));
     }
   }
 }

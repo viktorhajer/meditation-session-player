@@ -25,6 +25,10 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
+#alert-3-sub-hdr {
+  font-weight: bold;
+}
+
 :root {
   --ion-color-primary: #d0297b;
   --ion-color-primary-rgb: 208,41,123;
@@ -106,6 +110,13 @@
     --ion-color-secondary-shade: #7f353e;
     --ion-color-secondary-tint: #9b5059;
 
+    --ion-color-light: #e7e9ef;
+    --ion-color-light-rgb: 231,233,239;
+    --ion-color-light-contrast: #000000;
+    --ion-color-light-contrast-rgb: 0,0,0;
+    --ion-color-light-shade: #cbcdd2;
+    --ion-color-light-tint: #e9ebf1;
+
     --ion-background-color: #f2f2f2;
     --ion-custome-img-filter: hue-rotate(25deg) grayscale(47%) brightness(0.95);
   }
@@ -179,7 +190,7 @@
     --ion-color-secondary-shade: #cd7ca5;
     --ion-color-secondary-tint: #eb98c2;
 
-    --ion-custome-img-filter: none;
+    --ion-custome-img-filter: brightness(1);
   }
 
   .purple {
@@ -197,7 +208,6 @@
     --ion-color-secondary-shade: #8101b8;
     --ion-color-secondary-tint: #9e1ad6;
 
-    --ion-custome-img-filter: none;
     --ion-custome-img-filter: hue-rotate(322deg) grayscale(15%) brightness(1.2);
   }
 

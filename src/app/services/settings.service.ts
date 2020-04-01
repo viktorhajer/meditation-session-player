@@ -105,6 +105,15 @@ export class SettingsService {
     this.saveSettings();
   }
 
+  toggleFavorite(id: number) {
+    const length = this.settings.favorites.length;
+    this.settings.favorites = this.settings.favorites.filter(f => f !== id);
+    if (length === this.settings.favorites.length) {
+      this.settings.favorites.push(id);
+    }
+    this.saveSettings();
+  }
+
   isRepeatEnabled(): boolean {
     return this.settings.repeat === 1;
   }
