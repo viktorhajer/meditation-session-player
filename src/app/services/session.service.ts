@@ -12,12 +12,11 @@ export class SessionService {
 
   getSessions(): Promise<Session[]> {
     const list = [
-      {id: 0, name: 'Open The Window Of Your Heart - Meditation.mp3', url: 'music_example.mp3', duration: '12:05'},
-      {id: 1, name: 'OM AKHAND - Healing Power of OM.mp3', url: 'example.mp3', duration: '01:00'},
-      {id: 2, name: 'Meditation To Release Inner Tension.mp3', url: 'music_example.mp3', duration: '19:48'},
-      {id: 3, name: 'Meditation To Improve.mp3', url: 'ringTones/china-bell-ring.mp3', duration: '10:50'},
-      {id: 4, name: 'OM AKHAND', url: 'ringTones/china-bell-ring.mp3', duration: '05:06'},
-      {id: 5, name: 'Webcast from Wellington.mp3', url: 'ringTones/china-bell-ring.mp3', duration: '00:05'}
+      new Session({id: 0, name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: 'music_example.mp3', duration: '12:05'}),
+      new Session({id: 1, name: 'OM AKHAND - Healing Power of OM.mp3', url: 'example.mp3', duration: '01:00'}),
+      new Session({id: 2, name: 'Meditation To Release Inner Tension.mp3', url: 'music_example.mp3', duration: '19:48'}),
+      new Session({id: 3, name: 'Meditation To Improve.mp3', url: 'ringTones/china-bell-ring.mp3', duration: '10:50'}),
+      new Session({id: 4, name: 'OM AKHAND', url: 'ringTones/china-bell-ring.mp3', duration: '05:06'})
     ];
     this.setFavorites(list);
     list.sort((s1, s2) => this.sortSession(s1, s2));

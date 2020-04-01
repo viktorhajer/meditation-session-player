@@ -12,7 +12,7 @@
 <ion-content>
   <div padding id="app-section" [class.small]="!!currentSession">
     <img src="/assets/icon/meditation-icon.jpg" [class.small]="!!currentSession">
-    <h2 id="app-title" [class.small]="!!currentSession">{{ !!currentSession ? currentSession?.name : 'Hari OM!' }}</h2>
+    <h2 id="app-title" [class.small]="!!currentSession">{{ !!currentSession ? currentSession?.getTitle() : 'Hari OM!' }}</h2>
   </div>
   <ion-list *ngIf="sessions.length" mode="ios">
     <ion-list-header>
@@ -42,7 +42,8 @@
       <ion-col *ngIf="currentSession?.id === session.id" class="ion-justify-content-end" (click)="openSession(session)">
         <p class="selected-label">
           <label>SELECTED <br> {{getCurrentTime()}}</label>
-          <img src="/assets/anim.gif">
+          <img src="/assets/anim.gif" *ngIf="!audioElement.paused">
+          <ion-icon name="pause" *ngIf="audioElement.paused"></ion-icon>
         </p>
       </ion-col>
       <ion-col *ngIf="currentSession?.id !== session.id" class="ion-justify-content-end" (click)="openSession(session)">
