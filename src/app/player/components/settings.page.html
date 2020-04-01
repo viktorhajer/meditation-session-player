@@ -1,8 +1,8 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title color="light">Settings</ion-title>
+    <ion-title color="light">Settings ({{settings.profile.name}})</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="dismiss()">
+      <ion-button (click)="close()">
         <ion-icon name="close-outline" color="light"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -18,7 +18,6 @@
                            [value]="i">{{theme.title}}</ion-select-option>
       </ion-select>
     </ion-item>
-
     <ion-list-header color="medium">Alarm</ion-list-header>
     <ion-item>
       <ion-label>Alarm Type</ion-label>
@@ -73,6 +72,24 @@
         <ion-icon name="help"  class="help-icon"></ion-icon>
       </ion-label>
       <ion-toggle [disabled]="!musicEnabled" [(ngModel)]="restartMusic" (ionChange)="changedRestartMusic()"></ion-toggle>
+    </ion-item>
+
+    <ion-list-header color="medium">Profile</ion-list-header>
+    <ion-item>
+      <ion-label>New Profile</ion-label>
+      <ion-button (click)="showProfileForm()">Add</ion-button>
+    </ion-item>
+    <ion-item>
+      <ion-label>Select profile</ion-label>
+      <ion-select [disabled]="settings.profiles.profiles.length === 1" [(ngModel)]="selectedProfile"
+                  (ionChange)="changedProfile()" interface="popover">
+        <ion-select-option *ngFor="let profile of settings.profiles.profiles"
+                           [value]="profile.name">{{profile.name}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Remove current profile</ion-label>
+      <ion-button [disabled]="settings.profile.name === 'Default'" (click)="confirmDelete()">Remove</ion-button>
     </ion-item>
   </ion-list>
 </ion-content>

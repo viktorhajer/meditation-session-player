@@ -22,22 +22,15 @@ export class SettingsPage {
   musicVolume: number;
   restartMusic: boolean;
   themeIndex: number;
+  selectedProfile: string;
 
   constructor(private modalCtrl: ModalController,
               private settings: SettingsService,
               private notification: NotificationService,
               private alertController: AlertController,
               public bgMusic: BackgroundMusicService) {
-    this.notificationEnabled = this.settings.settings.notificationEnabled;
-    this.notificationType = this.settings.settings.notificationType;
-    this.ringToneIndex = this.settings.settings.ringToneIndex;
-    this.timerEnabled = this.settings.settings.timerEnabled;
-    this.timerInterval = this.settings.settings.timerInterval.join(',');
-    this.musicEnabled = this.settings.settings.musicEnabled;
-    this.musicIndex = this.settings.settings.musicIndex;
-    this.musicVolume = this.settings.settings.musicVolume;
-    this.restartMusic = this.settings.settings.restartMusic;
-    this.themeIndex = this.settings.settings.themeIndex;
+    this.fillSettingsForm();
+    this.settings.changeProfile.subscribe(() => this.fillSettingsForm());
   }
 
   changedNotificationEnabled() {
@@ -87,11 +80,56 @@ export class SettingsPage {
     this.settings.setThemeIndex(this.themeIndex);
   }
 
+  changedProfile() {
+    this.settings.setProfile(this.selectedProfile);
+  }
+
   showHelp(subHeader = '', messageKey = '') {
     this.alertController.create({header: 'Information', subHeader, message: HELP[messageKey]}).then(t => t.present());
   }
 
-  dismiss() {
+  showProfileForm() {
+    this.alertController.create({
+      header: 'Create new profile',
+      inputs: [{name: 'name', type: 'text', placeholder: 'Profile name'}],
+      buttons: [{text: 'Cancel', role: 'cancel', cssClass: 'secondary'},
+        {
+          text: 'Ok',
+          handler: (data) => {
+            const name = data.name.trim();
+            if (!!data.name.trim().length && !this.settings.isProfileNameExists(name)) {
+              this.settings.newProfile(data.name.trim());
+            }
+          }
+        }]
+    }).then(t => t.present());
+  }
+
+  confirmDelete() {
+    this.alertController.create({
+      header: 'Confirmation',
+      message: 'Are you sure to delete the profile?',
+      buttons: [
+        {text: 'Yes', handler: () => console.log('delete')},
+        {text: 'No', role: 'cancel', cssClass: 'secondary'}]
+    }).then(t => t.present());
+  }
+
+  close() {
     this.modalCtrl.dismiss();
+  }
+
+  private fillSettingsForm() {
+    this.notificationEnabled = this.settings.profile.notificationEnabled;
+    this.notificationType = this.settings.profile.notificationType;
+    this.ringToneIndex = this.settings.profile.ringToneIndex;
+    this.timerEnabled = this.settings.profile.timerEnabled;
+    this.timerInterval = this.settings.profile.timerInterval.join(',');
+    this.musicEnabled = this.settings.profile.musicEnabled;
+    this.musicIndex = this.settings.profile.musicIndex;
+    this.musicVolume = this.settings.profile.musicVolume;
+    this.restartMusic = this.settings.profile.restartMusic;
+    this.themeIndex = this.settings.profile.themeIndex;
+    this.selectedProfile = this.settings.profile.name;
   }
 }

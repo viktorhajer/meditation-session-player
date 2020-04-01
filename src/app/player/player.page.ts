@@ -50,10 +50,12 @@ export class PlayerPage implements AfterViewInit {
   constructor(private loadingCtrl: LoadingController,
               private modalController: ModalController,
               private bgMusic: BackgroundMusicService,
+              private settings: SettingsService,
               public sessionService: SessionService,
               public notification: NotificationService,
               public settingsService: SettingsService) {
     this.refreshDocuments();
+    this.settings.changeProfile.subscribe(() => this.refreshDocuments());
   }
 
   ngAfterViewInit() {

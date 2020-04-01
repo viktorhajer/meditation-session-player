@@ -46,7 +46,7 @@ export class SessionService {
   }
 
   private setFavorites(sessions: Session[]) {
-    const favorites = this.settingsService.settings.favorites;
+    const favorites = this.settingsService.profile.favorites;
     sessions.forEach(s => {
       s.liked = favorites.some(id => id === s.id);
     });

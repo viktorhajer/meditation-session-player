@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {SettingsModel} from '../models/settings.model';
+import {EventEmitter, Injectable} from '@angular/core';
+import {ProfileModel, ProfilesModel} from '../models/profile.model';
 import {RingToneModel} from '../models/ringTone.model';
 
 const APPLICATION_KEY = 'MeditationPlayerSettings';
@@ -27,16 +27,44 @@ export const THEME_LIST: { title: string, className: string }[] = [
 @Injectable({providedIn: 'root'})
 export class SettingsService {
 
-  settings = new SettingsModel();
+  profiles: ProfilesModel;
+  profile = new ProfileModel();
+  changeProfile = new EventEmitter<void>();
 
   constructor() {
     const data = localStorage.getItem(APPLICATION_KEY);
     if (data) {
-      this.settings = JSON.parse(data);
-      this.setThemeIndex();
+      this.profiles = JSON.parse(data);
+      this.profile = this.profiles.profiles.find(p => p.selected);
     } else {
-      this.setThemeIndex(0);
+      this.profile.selected = true;
+      this.profiles = {profiles: [this.profile]};
     }
+    this.setThemeIndex();
+  }
+
+  newProfile(name: string) {
+    const oldProfile = new ProfileModel();
+    Object.getOwnPropertyNames(this.profile).forEach(f => {
+      oldProfile[f] = this.profile[f];
+    });
+    oldProfile.selected = false;
+    this.profile.name = name;
+    this.profiles.profiles.push(oldProfile);
+    this.saveProfile();
+  }
+
+  setProfile(name: string) {
+    const oldName = this.profile.name;
+    this.profile = this.profiles.profiles.find(p => p.name === name);
+    this.profile.selected = true;
+    this.profiles.profiles.find(p => p.name === oldName).selected = false;
+    this.setThemeIndex();
+    this.changeProfile.emit();
+  }
+
+  isProfileNameExists(name: string): boolean {
+    return this.profiles.profiles.some(p => p.name === name);
   }
 
   getRingTones(): RingToneModel[] {
@@ -52,91 +80,91 @@ export class SettingsService {
   }
 
   setRingToneIndex(value = 0) {
-    this.settings.ringToneIndex = value;
-    this.saveSettings();
+    this.profile.ringToneIndex = value;
+    this.saveProfile();
   }
 
   setNotificationEnabled(flag = true) {
-    this.settings.notificationEnabled = flag;
-    this.saveSettings();
+    this.profile.notificationEnabled = flag;
+    this.saveProfile();
   }
 
   setNotificationType(value = 0) {
-    this.settings.notificationType = value;
-    this.saveSettings();
+    this.profile.notificationType = value;
+    this.saveProfile();
   }
 
   setTimerEnabled(flag = true) {
-    this.settings.timerEnabled = flag;
-    this.saveSettings();
+    this.profile.timerEnabled = flag;
+    this.saveProfile();
   }
 
   setTimerInterval(interval = []) {
-    this.settings.timerInterval = interval;
-    this.saveSettings();
+    this.profile.timerInterval = interval;
+    this.saveProfile();
   }
 
   setMusicEnabled(enabled = true) {
-    this.settings.musicEnabled = enabled;
-    this.saveSettings();
+    this.profile.musicEnabled = enabled;
+    this.saveProfile();
   }
 
   setMusicIndex(value = 0) {
-    this.settings.musicIndex = value;
-    this.saveSettings();
+    this.profile.musicIndex = value;
+    this.saveProfile();
   }
 
   setMusicVolume(value = 100) {
-    this.settings.musicVolume = value;
-    this.saveSettings();
+    this.profile.musicVolume = value;
+    this.saveProfile();
   }
 
   setRestartMusic(flag = true) {
-    this.settings.restartMusic = flag;
-    this.saveSettings();
+    this.profile.restartMusic = flag;
+    this.saveProfile();
   }
 
   setThemeIndex(value?: number) {
     if (!!value || value === 0) {
-      this.settings.themeIndex = value;
+      this.profile.themeIndex = value;
     }
     document.body.classList.value = '';
     document.body.classList.toggle(this.getSelectedThemeClass());
-    this.saveSettings();
+    this.saveProfile();
   }
 
   toggleFavorite(id: number) {
-    const length = this.settings.favorites.length;
-    this.settings.favorites = this.settings.favorites.filter(f => f !== id);
-    if (length === this.settings.favorites.length) {
-      this.settings.favorites.push(id);
+    const length = this.profile.favorites.length;
+    this.profile.favorites = this.profile.favorites.filter(f => f !== id);
+    if (length === this.profile.favorites.length) {
+      this.profile.favorites.push(id);
     }
-    this.saveSettings();
+    this.saveProfile();
   }
 
   isRepeatEnabled(): boolean {
-    return this.settings.repeat === 1;
+    return this.profile.repeat === 1;
   }
 
   toggleRepeat() {
-    this.settings.repeat = (this.settings.repeat + 1) % 2;
-    this.saveSettings();
+    this.profile.repeat = (this.profile.repeat + 1) % 2;
+    this.saveProfile();
   }
 
   isSpeedEnabled(): boolean {
-    return this.settings.speed === 1;
+    return this.profile.speed === 1;
   }
 
   toggleSpeed() {
-    this.settings.speed = (this.settings.speed + 1) % 2;
-    this.saveSettings();
+    this.profile.speed = (this.profile.speed + 1) % 2;
+    this.saveProfile();
   }
 
   private getSelectedThemeClass(): string {
-    return THEME_LIST[this.settings.themeIndex].className;
+    return THEME_LIST[this.profile.themeIndex].className;
   }
 
-  private saveSettings() {
-    localStorage.setItem(APPLICATION_KEY, JSON.stringify(this.settings));
+  private saveProfile() {
+    localStorage.setItem(APPLICATION_KEY, JSON.stringify(this.profiles));
   }
 }

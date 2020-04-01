@@ -23,7 +23,7 @@ export class NotificationService {
   }
 
   ring(): Promise<void> {
-    const notificationEnabled = this.settingsService.settings.notificationEnabled;
+    const notificationEnabled = this.settingsService.profile.notificationEnabled;
     return this.playNotification(notificationEnabled)
       .then(() => this.vibrateDevice(notificationEnabled));
   }
@@ -33,7 +33,7 @@ export class NotificationService {
       if (this.timerIndex !== 0) {
         this.playNotification().then(() => this.vibrateDevice());
       }
-      const list = this.settingsService.settings.timerInterval;
+      const list = this.settingsService.profile.timerInterval;
       if (this.timerIndex < list.length) {
         this.timerStarted = Date.now();
         this.timer = setTimeout(() => {
@@ -61,18 +61,18 @@ export class NotificationService {
     if (!this.timerStarted) {
       this.countdownText = '';
     }
-    const diff1 = this.settingsService.settings.timerInterval.length - this.timerIndex;
-    const diff2 = this.settingsService.settings.timerInterval[this.timerIndex] -
+    const diff1 = this.settingsService.profile.timerInterval.length - this.timerIndex;
+    const diff2 = this.settingsService.profile.timerInterval[this.timerIndex] -
       Math.floor((Date.now() - this.timerStarted) / 1000);
     this.countdownText = DateHelper.formatTime(diff2) + ` (${diff1})`;
   }
 
   private isTimerEnabled(): boolean {
-    return this.settingsService.settings.timerEnabled && this.settingsService.settings.timerInterval.length > 0;
+    return this.settingsService.profile.timerEnabled && this.settingsService.profile.timerInterval.length > 0;
   }
 
   private getSelectedRingTone(): RingToneModel {
-    return RING_TONE_LIST[this.settingsService.settings.ringToneIndex];
+    return RING_TONE_LIST[this.settingsService.profile.ringToneIndex];
   }
 
   private playNotification(enabled = true): Promise<void> {
@@ -93,12 +93,12 @@ export class NotificationService {
   }
 
   private isRingingTypeEnabled(): boolean {
-    return this.settingsService.settings.notificationType === NotificationType.RINGING
-        || this.settingsService.settings.notificationType === NotificationType.RINGING_AND_VIBRATION;
+    return this.settingsService.profile.notificationType === NotificationType.RINGING
+        || this.settingsService.profile.notificationType === NotificationType.RINGING_AND_VIBRATION;
   }
 
   private isVibrationTypeEnabled(): boolean {
-    return this.settingsService.settings.notificationType === NotificationType.VIBRATION
-        || this.settingsService.settings.notificationType === NotificationType.RINGING_AND_VIBRATION;
+    return this.settingsService.profile.notificationType === NotificationType.VIBRATION
+        || this.settingsService.profile.notificationType === NotificationType.RINGING_AND_VIBRATION;
   }
 }

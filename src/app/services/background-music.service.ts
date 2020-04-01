@@ -20,7 +20,7 @@ export class BackgroundMusicService {
   play() {
     this.refreshMusic();
     this.audioElement.autoplay = true;
-    if (this.settingsService.settings.musicEnabled && this.audioElement.paused) {
+    if (this.settingsService.profile.musicEnabled && this.audioElement.paused) {
       this.audioElement.play();
     }
   }
@@ -32,7 +32,7 @@ export class BackgroundMusicService {
   stop() {
     this.audioElement.pause();
     this.audioElement.autoplay = false;
-    if (this.settingsService.settings.restartMusic) {
+    if (this.settingsService.profile.restartMusic) {
       this.audioElement.currentTime = 0;
     }
   }
@@ -41,13 +41,13 @@ export class BackgroundMusicService {
     if (!this.audioElement.src.endsWith(this.getSelectedMusic().url)) {
       this.audioElement.src = this.getSelectedMusic().url;
     }
-    this.audioElement.volume = this.settingsService.settings.musicVolume / 100;
-    if (!this.settingsService.settings.musicEnabled) {
+    this.audioElement.volume = this.settingsService.profile.musicVolume / 100;
+    if (!this.settingsService.profile.musicEnabled) {
       this.audioElement.pause();
     }
   }
 
   private getSelectedMusic(): RingToneModel {
-    return BACKGROUND_MUSIC_LIST[this.settingsService.settings.musicIndex];
+    return BACKGROUND_MUSIC_LIST[this.settingsService.profile.musicIndex];
   }
 }
