@@ -94,6 +94,7 @@
   --ion-color-light-tint: #f5f6f9;
 
   --ion-custome-img-filter: grayscale(100%) brightness(0.95);
+  --ion-custome-anim-img-filter: brightness(1);
 
   .black-red {
     --ion-color-primary: #000000;
@@ -165,14 +166,22 @@
     --ion-color-primary-shade: #dcc209;
     --ion-color-primary-tint: #fbe023;
 
-    --ion-color-secondary: #ce6700;
-    --ion-color-secondary-rgb: 206,103,0;
-    --ion-color-secondary-contrast: #ffffff;
-    --ion-color-secondary-contrast-rgb: 255,255,255;
-    --ion-color-secondary-shade: #b55b00;
-    --ion-color-secondary-tint: #d3761a;
+    --ion-color-secondary: #edd005;
+    --ion-color-secondary-rgb: 237,208,5;
+    --ion-color-secondary-contrast: #000000;
+    --ion-color-secondary-contrast-rgb: 0,0,0;
+    --ion-color-secondary-shade: #d1b704;
+    --ion-color-secondary-tint: #efd51e;
+
+    --ion-color-light: #222428;
+    --ion-color-light-rgb: 34,36,40;
+    --ion-color-light-contrast: #ffffff;
+    --ion-color-light-contrast-rgb: 255,255,255;
+    --ion-color-light-shade: #1e2023;
+    --ion-color-light-tint: #383a3e;
 
     --ion-custome-img-filter: hue-rotate(80deg) grayscale(0%) brightness(2.2);
+    --ion-custome-anim-img-filter: invert(1);
   }
 
   .pink {
