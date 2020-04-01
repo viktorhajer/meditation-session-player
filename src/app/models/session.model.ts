@@ -36,6 +36,6 @@ export class Session {
 
   getTitle(): string {
     const title = this.row.name.replace('_', ' ');
-    return title.substring(0, title.lastIndexOf('.'));
+    return (title.indexOf('.') === -1) ? title : title.substring(0, title.lastIndexOf('.'));
   }
 }
