@@ -1,5 +1,5 @@
 import {EventEmitter, Injectable} from '@angular/core';
-import {ProfileModel, ProfilesModel} from '../models/profile.model';
+import {DEFAULT_PROFILE_NAME, ProfileModel, ProfilesModel} from '../models/profile.model';
 import {RingToneModel} from '../models/ringTone.model';
 
 const APPLICATION_KEY = 'MeditationPlayerSettings';
@@ -52,15 +52,26 @@ export class SettingsService {
     this.profile.name = name;
     this.profiles.profiles.push(oldProfile);
     this.saveProfile();
+    this.changeProfile.emit();
   }
 
-  setProfile(name: string) {
+  setProfile(name: string, emit = true) {
     const oldName = this.profile.name;
     this.profile = this.profiles.profiles.find(p => p.name === name);
     this.profile.selected = true;
     this.profiles.profiles.find(p => p.name === oldName).selected = false;
     this.setThemeIndex();
     this.changeProfile.emit();
+  }
+
+  deleteCurrentProfile() {
+    if (this.profile.name !== DEFAULT_PROFILE_NAME) {
+      const oldName = this.profile.name;
+      this.setProfile(DEFAULT_PROFILE_NAME, false);
+      this.profiles.profiles = this.profiles.profiles.filter(p => p.name !== oldName);
+      this.saveProfile();
+      this.changeProfile.emit();
+    }
   }
 
   isProfileNameExists(name: string): boolean {

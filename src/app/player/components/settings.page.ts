@@ -110,7 +110,7 @@ export class SettingsPage {
       header: 'Confirmation',
       message: 'Are you sure to delete the profile?',
       buttons: [
-        {text: 'Yes', handler: () => console.log('delete')},
+        {text: 'Yes', handler: () => this.settings.deleteCurrentProfile()},
         {text: 'No', role: 'cancel', cssClass: 'secondary'}]
     }).then(t => t.present());
   }

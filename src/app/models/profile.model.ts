@@ -1,5 +1,7 @@
 import {NotificationType} from './notification.model';
 
+export const DEFAULT_PROFILE_NAME = 'Default';
+
 export interface ProfilesModel {
   profiles: ProfileModel[];
 }
@@ -7,7 +9,7 @@ export interface ProfilesModel {
 export class ProfileModel {
   constructor(
     public selected = false,
-    public name = 'Default',
+    public name = DEFAULT_PROFILE_NAME,
     public ringToneIndex = 0,
     public notificationEnabled = false,
     public notificationType = NotificationType.RINGING,
