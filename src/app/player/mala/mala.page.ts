@@ -10,20 +10,47 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
   animations: [
     trigger('showHide', [
       state(
-        'a',
+        'b0',
         style({
           opacity: 1,
-          top: '0px'
+          top: '0px',
+          width: '200px',
+          height: '200px',
+          filter: 'blur(0px)'
         })
       ),
       state(
-        'b',
+        'b1',
         style({
           opacity: 0,
-          top: '-250px'
+          top: '-250px',
+          width: '100px',
+          height: '100px',
+          filter: 'blur(8px)'
         })
       ),
-      transition('a <=> b', animate('150ms ease-in-out'))
+      state(
+        'b2',
+        style({
+          opacity: 1,
+          top: '100px',
+          filter: 'blur(3px)'
+        })
+      ),
+      state(
+        'b3',
+        style({
+          opacity: 0,
+          top: '0px',
+          width: '700px',
+          height: '700px',
+          filter: 'blur(15px)'
+        })
+      ),
+      transition('b0 => b1', animate('150ms ease-in')),
+      transition('b1 => b2', animate('150ms ease-out')),
+      transition('b2 => b0', animate('150ms ease-out')),
+      transition('b0 <=> b3', animate('150ms ease-out'))
     ])
   ],
   styleUrls: ['./mala.page.scss']
@@ -31,7 +58,7 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 export class MalaPage {
 
   num = 0;
-  displayFooter = 'a';
+  ballAnim = 'b0';
 
   constructor(private modalCtrl: ModalController,
               private profileService: ProfileService,
@@ -43,17 +70,22 @@ export class MalaPage {
   }
 
   onAnimationEvent(event) {
-    if(event.toState === 'b') {
-      this.displayFooter = 'a';
+    if (event.toState === 'b1') {
+      this.ballAnim = 'b2';
+    }
+    if (event.toState === 'b2' || event.toState === 'b3') {
+      this.ballAnim = 'b0';
     }
   }
 
   pick() {
-    this.displayFooter = 'b';
     this.num++;
     if (this.num === this.profileService.profile.malaBeads) {
+      this.ballAnim = 'b3';
       this.num = 0;
       this.notificationService.ring(true);
+    } else {
+      this.ballAnim = 'b1';
     }
   }
 

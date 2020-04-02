@@ -11,8 +11,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content (click)="pick()">
-  <div class="mala-container ion-align-items-center ion-justify-content-center"
-       (@showHide.done)="onAnimationEvent($event)" [@showHide]="displayFooter">
-    <div class="ball">{{num}}</div>
+  <div class="mala-container ion-align-items-center ion-justify-content-center">
+    <div class="ball" (@showHide.done)="onAnimationEvent($event)" [@showHide]="ballAnim">{{num}}</div>
   </div>
 </ion-content>
