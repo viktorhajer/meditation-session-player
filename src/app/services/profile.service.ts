@@ -11,7 +11,7 @@ export const RING_TONE_LIST = [
 ];
 
 export const BACKGROUND_MUSIC_LIST = [
-  {url: '/assets/music_example.mp3', name: 'Cell Phone Beep'}
+  {url: '/assets/music_example.mp3', name: 'Himalaya'}
 ];
 
 export const THEME_LIST: { title: string, className: string }[] = [
