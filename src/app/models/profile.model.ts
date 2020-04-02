@@ -24,7 +24,7 @@ export class ProfileModel {
     public themeIndex = 2,
     public malaEnabled = false,
     public malaBeads = 108,
-    public hidden: number[] = [],
-    public favorites: number[] = []) {
+    public hidden: string[] = [],
+    public favorites: string[] = []) {
   }
 }

@@ -1,5 +1,5 @@
 export class RowSession {
-  id: number;
+  id?: string;
   name: string;
   url: string;
   duration?: string;
@@ -11,8 +11,12 @@ export class Session {
   constructor(public row: RowSession) {
   }
 
-  get id(): number {
+  get id(): string {
     return this.row.id;
+  }
+
+  set id(value: string) {
+    this.row.id = value;
   }
 
   get name(): string {

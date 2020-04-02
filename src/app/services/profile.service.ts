@@ -61,7 +61,9 @@ export class ProfileService {
     this.profile.selected = true;
     this.profiles.profiles.find(p => p.name === oldName).selected = false;
     this.setThemeIndex();
-    this.changeProfile.emit();
+    if (emit) {
+      this.changeProfile.emit();
+    }
   }
 
   deleteCurrentProfile() {
@@ -154,7 +156,7 @@ export class ProfileService {
     this.saveProfile();
   }
 
-  toggleLike(id: number) {
+  toggleLike(id: string) {
     const length = this.profile.favorites.length;
     this.profile.favorites = this.profile.favorites.filter(f => f !== id);
     if (length === this.profile.favorites.length) {
@@ -163,7 +165,7 @@ export class ProfileService {
     this.saveProfile();
   }
 
-  toggleHide(id: number) {
+  toggleHide(id: string) {
     const length = this.profile.hidden.length;
     this.profile.hidden = this.profile.hidden.filter(h => h !== id);
     if (length === this.profile.hidden.length) {

@@ -12,12 +12,16 @@ export class SessionService {
 
   getSessions(hidden = false): Promise<Session[]> {
     let list = [
-      new Session({id: 0, name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: 'music_example.mp3', duration: '12:05'}),
-      new Session({id: 1, name: 'OM AKHAND - Healing Power of OM.mp3', url: 'example.mp3', duration: '01:00'}),
-      new Session({id: 2, name: 'Meditation To Release Inner Tension.mp3', url: 'music_example.mp3', duration: '19:48'}),
-      new Session({id: 3, name: 'Meditation To Improve.mp3', url: 'ringTones/china-bell-ring.mp3', duration: '10:50'}),
-      new Session({id: 4, name: 'OM AKHAND', url: 'ringTones/china-bell-ring.mp3', duration: '05:06'})
+      new Session({name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: 'music_example.mp3'}),
+      new Session({name: 'OM AKHAND - Healing Power of OM.mp3', url: 'example.mp3'}),
+      new Session({name: 'Meditation To Release Inner Tension.mp3', url: 'music_example.mp3'}),
+      new Session({name: 'Meditation To Improve.mp3', url: 'ringTones/china-bell-ring.mp3'}),
+      new Session({name: 'OM AKHAND', url: 'ringTones/china-bell-ring.mp3'})
     ];
+    list = list.map(s => {
+      s.id = s.name.toLowerCase();
+      return s;
+    });
     this.setFavorites(list);
     this.setHidden(list);
     list = list.filter(s => s.hidden === hidden);
@@ -52,6 +56,7 @@ export class SessionService {
     sessions.forEach(s => {
       s.liked = favorites.some(id => id === s.id);
     });
+    console.log(sessions);
   }
 
   private setHidden(sessions: Session[]) {

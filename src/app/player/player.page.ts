@@ -195,7 +195,7 @@ export class PlayerPage implements AfterViewInit {
     this.modalController.create({
       component: SettingsPage
     }).then(modal => {
-      // this.pause();
+      this.pause();
       modal.present();
     });
   }
@@ -258,7 +258,7 @@ export class PlayerPage implements AfterViewInit {
     return this.loadingModal;
   }
 
-  private pushIndexHistory(index: number) {
+  private pushIndexHistory(index: string) {
     this.sessionHistory.push(index);
     if (this.sessionHistory.length > (this.sessions.length - 1)) {
       this.sessionHistory = this.sessionHistory.slice(Math.floor(this.sessions.length / 2));
