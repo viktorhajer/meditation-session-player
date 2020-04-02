@@ -19,6 +19,7 @@ export class SessionService {
       new Session({id: 4, name: 'OM AKHAND', url: 'ringTones/china-bell-ring.mp3', duration: '05:06'})
     ];
     this.setFavorites(list);
+    this.setHidden(list);
     list.sort((s1, s2) => this.sortSession(s1, s2));
     return Promise.resolve(list);
   }
@@ -49,6 +50,13 @@ export class SessionService {
     const favorites = this.profileService.profile.favorites;
     sessions.forEach(s => {
       s.liked = favorites.some(id => id === s.id);
+    });
+  }
+
+  private setHidden(sessions: Session[]) {
+    const hidden = this.profileService.profile.hidden;
+    sessions.forEach(s => {
+      s.hidden = hidden.some(id => id === s.id);
     });
   }
 }

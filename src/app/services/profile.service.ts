@@ -154,11 +154,20 @@ export class ProfileService {
     this.saveProfile();
   }
 
-  toggleFavorite(id: number) {
+  toggleLike(id: number) {
     const length = this.profile.favorites.length;
     this.profile.favorites = this.profile.favorites.filter(f => f !== id);
     if (length === this.profile.favorites.length) {
       this.profile.favorites.push(id);
+    }
+    this.saveProfile();
+  }
+
+  toggleHide(id: number) {
+    const length = this.profile.hidden.length;
+    this.profile.hidden = this.profile.hidden.filter(h => h !== id);
+    if (length === this.profile.hidden.length) {
+      this.profile.hidden.push(id);
     }
     this.saveProfile();
   }

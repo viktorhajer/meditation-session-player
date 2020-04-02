@@ -111,7 +111,12 @@ export class PlayerPage implements AfterViewInit {
   }
 
   likeSession(session: Session) {
-    this.profileService.toggleFavorite(session.id);
+    this.profileService.toggleLike(session.id);
+    this.refreshDocuments();
+  }
+
+  hideSession(session: Session) {
+    this.profileService.toggleHide(session.id);
     this.refreshDocuments();
   }
 

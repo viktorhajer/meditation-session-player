@@ -4,6 +4,7 @@ export class RowSession {
   url: string;
   duration?: string;
   liked?: boolean;
+  hidden?: boolean;
 }
 
 export class Session {
@@ -31,6 +32,14 @@ export class Session {
   }
 
   set liked(flag: boolean) {
+    this.row.liked = flag;
+  }
+
+  get hidden(): boolean {
+    return this.row.liked;
+  }
+
+  set hidden(flag: boolean) {
     this.row.liked = flag;
   }
 

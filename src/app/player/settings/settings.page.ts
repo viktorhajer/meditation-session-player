@@ -97,7 +97,8 @@ export class SettingsPage {
   }
 
   showHelp(subHeader = '', messageKey = '') {
-    this.alertController.create({header: 'Information', subHeader, message: HELP[messageKey]}).then(t => t.present());
+    this.alertController.create({header: 'Information', subHeader, message: HELP[messageKey],
+      buttons: [{text: 'Ok', role: 'cancel', cssClass: 'secondary'}]}).then(t => t.present());
   }
 
   showProfileForm() {
