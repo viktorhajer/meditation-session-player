@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BACKGROUND_MUSIC_LIST, ProfileService} from './profile.service';
-import {RingToneModel} from '../models/ringTone.model';
+import {ProfileService} from './profile.service';
 
 @Injectable({providedIn: 'root'})
 export class BackgroundMusicService {
@@ -12,8 +11,8 @@ export class BackgroundMusicService {
 
   setAudioElement(audioElement: HTMLAudioElement) {
     this.audioElement = audioElement;
-    this.audioElement.volume = 0.5;
-    this.audioElement.src = this.getSelectedMusic().url;
+    this.audioElement.volume = this.profileService.profile.musicVolume / 100;
+    this.audioElement.src = this.profileService.profile.musicUrl;
     this.audioElement.autoplay = false;
   }
 
@@ -38,16 +37,12 @@ export class BackgroundMusicService {
   }
 
   refreshMusic() {
-    if (!this.audioElement.src.endsWith(this.getSelectedMusic().url)) {
-      this.audioElement.src = this.getSelectedMusic().url;
+    if (!(this.audioElement.src === this.profileService.profile.musicUrl)) {
+      this.audioElement.src = this.profileService.profile.musicUrl;
     }
     this.audioElement.volume = this.profileService.profile.musicVolume / 100;
     if (!this.profileService.profile.musicEnabled) {
       this.audioElement.pause();
     }
-  }
-
-  private getSelectedMusic(): RingToneModel {
-    return BACKGROUND_MUSIC_LIST[this.profileService.profile.musicIndex];
   }
 }

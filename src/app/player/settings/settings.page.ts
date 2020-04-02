@@ -4,6 +4,8 @@ import {ProfileService} from '../../services/profile.service';
 import {BackgroundMusicService} from '../../services/background-music.service';
 import {NotificationService} from '../../services/notification.service';
 import {HELP} from '../../models/help.model';
+import {SessionService} from '../../services/session.service';
+import {Session} from '../../models/session.model';
 
 @Component({
   selector: 'app-settings-page',
@@ -18,21 +20,24 @@ export class SettingsPage {
   timerEnabled: boolean;
   timerInterval: string;
   musicEnabled: boolean;
-  musicIndex: number;
+  musicUrl: string;
   musicVolume: number;
   restartMusic: boolean;
   themeIndex: number;
   selectedProfile: string;
   malaEnabled: boolean;
   malaBeads: number;
+  sessions: Session[] = [];
 
   constructor(private modalCtrl: ModalController,
               private notification: NotificationService,
               private alertController: AlertController,
               public profileService: ProfileService,
+              public sessionService: SessionService,
               public bgMusic: BackgroundMusicService) {
     this.fillSettingsForm();
     this.profileService.changeProfile.subscribe(() => this.fillSettingsForm());
+    this.sessionService.getSessions().then(sessions => this.sessions = sessions);
   }
 
   changedMalaEnabled() {
@@ -72,8 +77,8 @@ export class SettingsPage {
     this.bgMusic.refreshMusic();
   }
 
-  changedMusicIndex() {
-    this.profileService.setMusicIndex(this.musicIndex);
+  changedMusicUrl() {
+    this.profileService.setMusicUrl(this.musicUrl);
     this.bgMusic.refreshMusic();
   }
 
@@ -97,8 +102,10 @@ export class SettingsPage {
   }
 
   showHelp(subHeader = '', messageKey = '') {
-    this.alertController.create({header: 'Information', subHeader, message: HELP[messageKey],
-      buttons: [{text: 'Ok', role: 'cancel', cssClass: 'secondary'}]}).then(t => t.present());
+    this.alertController.create({
+      header: 'Information', subHeader, message: HELP[messageKey],
+      buttons: [{text: 'Ok', role: 'cancel', cssClass: 'secondary'}]
+    }).then(t => t.present());
   }
 
   showProfileForm() {
@@ -139,7 +146,7 @@ export class SettingsPage {
     this.timerEnabled = this.profileService.profile.timerEnabled;
     this.timerInterval = this.profileService.profile.timerInterval.join(',');
     this.musicEnabled = this.profileService.profile.musicEnabled;
-    this.musicIndex = this.profileService.profile.musicIndex;
+    this.musicUrl = this.profileService.profile.musicUrl;
     this.musicVolume = this.profileService.profile.musicVolume;
     this.restartMusic = this.profileService.profile.restartMusic;
     this.themeIndex = this.profileService.profile.themeIndex;

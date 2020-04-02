@@ -90,13 +90,13 @@ export class PlayerPage implements AfterViewInit {
   openSession(session: Session) {
     this.audioElement.pause();
     this.audioElement.currentTime = 0;
-    if (!!this.currentSession && this.currentSession.id === session.id) {
+    if (!!this.currentSession && this.currentSession.url === session.url) {
       this.resetState();
     } else {
       this.notification.resetInterval();
-      this.pushIndexHistory(session.id);
+      this.pushHistory(session.url);
       this.currentSession = session;
-      this.audioElement.src = '/assets/' + this.currentSession.url;
+      this.audioElement.src = this.currentSession.url;
       this.audioElement.play().then(() => {
         this.displayFooter = 'active';
         this.setSpeed();
@@ -111,12 +111,12 @@ export class PlayerPage implements AfterViewInit {
   }
 
   likeSession(session: Session) {
-    this.profileService.toggleLike(session.id);
+    this.profileService.toggleLike(session.url);
     this.refreshDocuments();
   }
 
   hideSession(session: Session) {
-    this.profileService.toggleHide(session.id);
+    this.profileService.toggleHide(session.url);
     this.refreshDocuments();
   }
 
@@ -258,7 +258,7 @@ export class PlayerPage implements AfterViewInit {
     return this.loadingModal;
   }
 
-  private pushIndexHistory(index: string) {
+  private pushHistory(index: string) {
     this.sessionHistory.push(index);
     if (this.sessionHistory.length > (this.sessions.length - 1)) {
       this.sessionHistory = this.sessionHistory.slice(Math.floor(this.sessions.length / 2));

@@ -31,7 +31,7 @@
       </ion-col>
     </ion-list-header>
     <ion-item *ngFor="let session of sessions; let i = index" text-wrap
-              color="{{ currentSession?.id === session.id ? 'light' : ''}}">
+              color="{{ currentSession?.url === session.url ? 'light' : ''}}">
       <ion-col size="1" class="ion-justify-content-start" (click)="likeSession(session)">
         <ion-icon color="secondary" name="bookmark" *ngIf="session.liked"></ion-icon>
         <ion-icon name="bookmark-outline" *ngIf="!session.liked"></ion-icon>
@@ -39,18 +39,15 @@
       <ion-col size="8" class="ion-justify-content-start" (click)="openSession(session)">
         <p class="file-name">{{ session.name }}</p>
       </ion-col>
-      <ion-col *ngIf="currentSession?.id === session.id" class="ion-justify-content-end" (click)="openSession(session)">
+      <ion-col *ngIf="currentSession?.url === session.url" class="ion-justify-content-end" (click)="openSession(session)">
         <p class="selected-label">
           <label>SELECTED <br> {{getCurrentTime()}}</label>
           <img src="/assets/anim.gif" *ngIf="!audioElement.paused">
           <ion-icon name="pause" *ngIf="audioElement.paused"></ion-icon>
         </p>
       </ion-col>
-      <ion-col *ngIf="currentSession?.id !== session.id" class="ion-justify-content-end" (click)="openSession(session)">
-        <p class="selected-label">
-          {{ session.duration }}
-          <ion-icon name="play"></ion-icon>
-        </p>
+      <ion-col *ngIf="currentSession?.url !== session.url" class="ion-justify-content-end" (click)="openSession(session)">
+        <ion-icon name="play"></ion-icon>
       </ion-col>
     </ion-item>
   </ion-list>

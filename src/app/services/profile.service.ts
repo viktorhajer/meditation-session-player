@@ -10,10 +10,6 @@ export const RING_TONE_LIST = [
   {url: '/assets/ringTones/china-bell-ring.mp3', name: 'China Bell Ring'}
 ];
 
-export const BACKGROUND_MUSIC_LIST = [
-  {url: '/assets/music_example.mp3', name: 'Himalaya'}
-];
-
 export const THEME_LIST: { title: string, className: string }[] = [
   {title: 'Sahasrara', className: 'purple'},
   {title: 'Vishuddha', className: 'pink'},
@@ -84,10 +80,6 @@ export class ProfileService {
     return RING_TONE_LIST;
   }
 
-  getBackgroundMusics(): RingToneModel[] {
-    return BACKGROUND_MUSIC_LIST;
-  }
-
   getThemes(): { title: string, className: string }[] {
     return THEME_LIST;
   }
@@ -122,8 +114,8 @@ export class ProfileService {
     this.saveProfile();
   }
 
-  setMusicIndex(value = 0) {
-    this.profile.musicIndex = value;
+  setMusicUrl(value = '') {
+    this.profile.musicUrl = value;
     this.saveProfile();
   }
 
@@ -156,20 +148,20 @@ export class ProfileService {
     this.saveProfile();
   }
 
-  toggleLike(id: string) {
+  toggleLike(url: string) {
     const length = this.profile.favorites.length;
-    this.profile.favorites = this.profile.favorites.filter(f => f !== id);
+    this.profile.favorites = this.profile.favorites.filter(f => f !== url);
     if (length === this.profile.favorites.length) {
-      this.profile.favorites.push(id);
+      this.profile.favorites.push(url);
     }
     this.saveProfile();
   }
 
-  toggleHide(id: string) {
+  toggleHide(url: string) {
     const length = this.profile.hidden.length;
-    this.profile.hidden = this.profile.hidden.filter(h => h !== id);
+    this.profile.hidden = this.profile.hidden.filter(h => h !== url);
     if (length === this.profile.hidden.length) {
-      this.profile.hidden.push(id);
+      this.profile.hidden.push(url);
     }
     this.saveProfile();
   }

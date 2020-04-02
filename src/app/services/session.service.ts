@@ -10,21 +10,18 @@ export class SessionService {
   constructor(private profileService: ProfileService) {
   }
 
-  getSessions(hidden = false): Promise<Session[]> {
+  getSessions(all = true, hidden = false): Promise<Session[]> {
     let list = [
-      new Session({name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: 'music_example.mp3'}),
-      new Session({name: 'OM AKHAND - Healing Power of OM.mp3', url: 'example.mp3'}),
-      new Session({name: 'Meditation To Release Inner Tension.mp3', url: 'music_example.mp3'}),
-      new Session({name: 'Meditation To Improve.mp3', url: 'ringTones/china-bell-ring.mp3'}),
-      new Session({name: 'OM AKHAND', url: 'ringTones/china-bell-ring.mp3'})
+      new Session({name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: '/assets/music_example.mp3'}),
+      new Session({name: 'OM AKHAND - Healing Power of OM.mp3', url: '/assets/example.mp3'}),
+      new Session({name: 'Meditation To Improve.mp3', url: '/assets/ringTones/china-bell-ring.mp3'}),
+      new Session({name: 'OM AKHAND', url: '/assets/ringTones/cell-phone-vibrate.mp3'})
     ];
-    list = list.map(s => {
-      s.id = s.name.toLowerCase();
-      return s;
-    });
     this.setFavorites(list);
     this.setHidden(list);
-    list = list.filter(s => s.hidden === hidden);
+    if (!all) {
+      list = list.filter(s => s.hidden === hidden);
+    }
     list.sort((s1, s2) => this.sortSession(s1, s2));
     return Promise.resolve(list);
   }
@@ -54,7 +51,7 @@ export class SessionService {
   private setFavorites(sessions: Session[]) {
     const favorites = this.profileService.profile.favorites;
     sessions.forEach(s => {
-      s.liked = favorites.some(id => id === s.id);
+      s.liked = favorites.some(url => url === s.url);
     });
     console.log(sessions);
   }
@@ -62,7 +59,7 @@ export class SessionService {
   private setHidden(sessions: Session[]) {
     const hidden = this.profileService.profile.hidden;
     sessions.forEach(s => {
-      s.hidden = hidden.some(id => id === s.id);
+      s.hidden = hidden.some(url => url === s.url);
     });
   }
 }

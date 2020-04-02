@@ -24,7 +24,8 @@
     </ion-item>
     <ion-item>
       <ion-label>Number of mala beads</ion-label>
-      <ion-input type="number" [disabled]="!malaEnabled" [(ngModel)]="malaBeads" (ionChange)="changedMalaBeads()"></ion-input>
+      <ion-input type="number" [disabled]="!malaEnabled" [(ngModel)]="malaBeads"
+                 (ionChange)="changedMalaBeads()"></ion-input>
     </ion-item>
 
     <ion-list-header color="medium">Alarm</ion-list-header>
@@ -54,7 +55,8 @@
     </ion-item>
     <ion-item>
       <ion-label>Interval (secs)</ion-label>
-      <ion-input [disabled]="!timerEnabled" [(ngModel)]="timerInterval" (ionChange)="changedTimerInterval()"></ion-input>
+      <ion-input [disabled]="!timerEnabled" [(ngModel)]="timerInterval"
+                 (ionChange)="changedTimerInterval()"></ion-input>
     </ion-item>
 
     <ion-list-header color="medium">Background Music</ion-list-header>
@@ -63,11 +65,13 @@
       <ion-toggle [(ngModel)]="musicEnabled" (ionChange)="changedMusicEnabled()"></ion-toggle>
     </ion-item>
     <ion-item>
-      <ion-label>Music</ion-label>
-      <ion-select [disabled]="!musicEnabled" [(ngModel)]="musicIndex" (ionChange)="changedMusicIndex()"
+      <ion-label class="music-label">Music</ion-label>
+      <ion-select class="music-select" [disabled]="!musicEnabled" [(ngModel)]="musicUrl"
+                  (ionChange)="changedMusicUrl()"
                   interface="popover">
-        <ion-select-option *ngFor="let music of profileService.getBackgroundMusics(), let i = index"
-                           [value]="i">{{music.name}}</ion-select-option>
+        <ion-select-option *ngFor="let session of sessions" [value]="session.url">
+          {{session.getTitle()}}
+        </ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
