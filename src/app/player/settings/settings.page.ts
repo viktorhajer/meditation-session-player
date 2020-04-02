@@ -23,6 +23,8 @@ export class SettingsPage {
   restartMusic: boolean;
   themeIndex: number;
   selectedProfile: string;
+  malaEnabled: boolean;
+  malaBeads: number;
 
   constructor(private modalCtrl: ModalController,
               private notification: NotificationService,
@@ -31,6 +33,14 @@ export class SettingsPage {
               public bgMusic: BackgroundMusicService) {
     this.fillSettingsForm();
     this.profileService.changeProfile.subscribe(() => this.fillSettingsForm());
+  }
+
+  changedMalaEnabled() {
+    this.profileService.setMalaEnabled(this.malaEnabled);
+  }
+
+  changedMalaBeads() {
+    this.profileService.setMalaMalaBeads(this.malaBeads);
   }
 
   changedNotificationEnabled() {
@@ -133,5 +143,7 @@ export class SettingsPage {
     this.restartMusic = this.profileService.profile.restartMusic;
     this.themeIndex = this.profileService.profile.themeIndex;
     this.selectedProfile = this.profileService.profile.name;
+    this.malaEnabled = this.profileService.profile.malaEnabled;
+    this.malaBeads = this.profileService.profile.malaBeads;
   }
 }

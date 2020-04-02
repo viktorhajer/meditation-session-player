@@ -8,6 +8,7 @@ import {BackgroundMusicService} from '../services/background-music.service';
 import {SessionService} from '../services/session.service';
 import {Session} from '../models/session.model';
 import {DateHelper} from '../services/date.helper';
+import {MalaPage} from './mala/mala.page';
 
 @Component({
   selector: 'app-player',
@@ -92,6 +93,7 @@ export class PlayerPage implements AfterViewInit {
     if (!!this.currentSession && this.currentSession.id === session.id) {
       this.resetState();
     } else {
+      this.notification.resetInterval();
       this.pushIndexHistory(session.id);
       this.currentSession = session;
       this.audioElement.src = '/assets/' + this.currentSession.url;
@@ -127,11 +129,13 @@ export class PlayerPage implements AfterViewInit {
   }
 
   play() {
+    this.notification.resumeInterval();
     this.audioElement.play();
     this.bgMusic.play();
   }
 
   pause() {
+    this.notification.pauseInterval();
     this.audioElement.pause();
     this.bgMusic.pause();
   }
@@ -186,13 +190,17 @@ export class PlayerPage implements AfterViewInit {
     this.modalController.create({
       component: SettingsPage
     }).then(modal => {
-      this.pause();
+      // this.pause();
       modal.present();
     });
   }
 
   openMala() {
-    // TODO
+    if (this.profileService.profile.malaEnabled) {
+      this.modalController.create({
+        component: MalaPage
+      }).then(modal => modal.present());
+    }
   }
 
   get audioElement(): HTMLAudioElement {

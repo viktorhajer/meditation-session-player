@@ -18,6 +18,15 @@
                            [value]="i">{{theme.title}}</ion-select-option>
       </ion-select>
     </ion-item>
+    <ion-item>
+      <ion-label>Mala enabled</ion-label>
+      <ion-toggle [(ngModel)]="malaEnabled" (ionChange)="changedMalaEnabled()"></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label>Number of mala beads</ion-label>
+      <ion-input type="number" [disabled]="!malaEnabled" [(ngModel)]="malaBeads" (ionChange)="changedMalaBeads()"></ion-input>
+    </ion-item>
+
     <ion-list-header color="medium">Alarm</ion-list-header>
     <ion-item>
       <ion-label>Alarm Type</ion-label>
@@ -45,8 +54,7 @@
     </ion-item>
     <ion-item>
       <ion-label>Interval (secs)</ion-label>
-      <ion-input [disabled]="!timerEnabled" [(ngModel)]="timerInterval" (ionChange)="changedTimerInterval()"
-                 placeholder="Enter comma separated list, eg. 60,30"></ion-input>
+      <ion-input [disabled]="!timerEnabled" [(ngModel)]="timerInterval" (ionChange)="changedTimerInterval()"></ion-input>
     </ion-item>
 
     <ion-list-header color="medium">Background Music</ion-list-header>

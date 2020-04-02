@@ -10,7 +10,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div padding id="app-section" [class.small]="!!currentSession">
+  <div padding id="app-section" [class.small]="!!currentSession" (click)="openMala()">
     <img src="/assets/icon/meditation-icon.jpg" [class.small]="!!currentSession">
     <h2 id="app-title" [class.small]="!!currentSession">{{ !!currentSession ? currentSession?.getTitle() : 'Hari OM!' }}</h2>
   </div>

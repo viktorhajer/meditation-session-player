@@ -22,8 +22,8 @@ export class NotificationService {
     this.audioElement = audioElement;
   }
 
-  ring(): Promise<void> {
-    const notificationEnabled = this.profileService.profile.notificationEnabled;
+  ring(enabled = false): Promise<void> {
+    const notificationEnabled = enabled || this.profileService.profile.notificationEnabled;
     return this.playNotification(notificationEnabled)
       .then(() => this.vibrateDevice(notificationEnabled));
   }
@@ -51,6 +51,14 @@ export class NotificationService {
     this.timer = null;
     this.timerIndex = 0;
     this.timerStarted = 0;
+  }
+
+  pauseInterval() {
+    // TODO
+  }
+
+  resumeInterval() {
+    // TODO
   }
 
   isTimerActive(): boolean {

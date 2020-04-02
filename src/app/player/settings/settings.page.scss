@@ -2,6 +2,14 @@ ion-list-header {
   min-height: 20px;
 }
 
+ion-input {
+  border: 2px solid var(--ion-color-light);
+  border-radius: 10px;
+  margin-left: 5px;
+  padding-right: 10px !important;
+  text-align: right;
+}
+
 .help-icon {
   border: 1px solid;
   border-radius: 50%;

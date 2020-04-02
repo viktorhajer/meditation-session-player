@@ -144,6 +144,16 @@ export class ProfileService {
     this.saveProfile();
   }
 
+  setMalaEnabled(enabled = true) {
+    this.profile.malaEnabled = enabled;
+    this.saveProfile();
+  }
+
+  setMalaMalaBeads(value = 0) {
+    this.profile.malaBeads = value;
+    this.saveProfile();
+  }
+
   toggleFavorite(id: number) {
     const length = this.profile.favorites.length;
     this.profile.favorites = this.profile.favorites.filter(f => f !== id);
