@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Session} from '../models/session.model';
-import {SettingsService} from './settings.service';
+import {ProfileService} from './profile.service';
 
 @Injectable({providedIn: 'root'})
 export class SessionService {
 
   private orderAsc = true;
 
-  constructor(private settingsService: SettingsService) {
+  constructor(private profileService: ProfileService) {
   }
 
   getSessions(): Promise<Session[]> {
@@ -46,7 +46,7 @@ export class SessionService {
   }
 
   private setFavorites(sessions: Session[]) {
-    const favorites = this.settingsService.profile.favorites;
+    const favorites = this.profileService.profile.favorites;
     sessions.forEach(s => {
       s.liked = favorites.some(id => id === s.id);
     });

@@ -25,7 +25,7 @@ export const THEME_LIST: { title: string, className: string }[] = [
 ];
 
 @Injectable({providedIn: 'root'})
-export class SettingsService {
+export class ProfileService {
 
   profiles: ProfilesModel;
   profile = new ProfileModel();

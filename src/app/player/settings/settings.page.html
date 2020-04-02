@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title color="light">Settings ({{settings.profile.name}})</ion-title>
+    <ion-title color="light">Settings ({{profileService.profile.name}})</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="close()">
         <ion-icon name="close-outline" color="light"></ion-icon>
@@ -14,7 +14,7 @@
     <ion-item>
       <ion-label>Theme</ion-label>
       <ion-select [(ngModel)]="themeIndex" (ionChange)="changedThemeIndex()" interface="popover">
-        <ion-select-option *ngFor="let theme of settings.getThemes(), let i = index"
+        <ion-select-option *ngFor="let theme of profileService.getThemes(), let i = index"
                            [value]="i">{{theme.title}}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -29,8 +29,9 @@
     </ion-item>
     <ion-item>
       <ion-label>Ring Tone</ion-label>
-      <ion-select [disabled]="notificationType === 1" [(ngModel)]="ringToneIndex" (ionChange)="changedRingToneIndex()" interface="popover">
-        <ion-select-option *ngFor="let ringTone of settings.getRingTones(), let i = index"
+      <ion-select [disabled]="notificationType === 1" [(ngModel)]="ringToneIndex" (ionChange)="changedRingToneIndex()"
+                  interface="popover">
+        <ion-select-option *ngFor="let ringTone of profileService.getRingTones(), let i = index"
                            [value]="i">{{ringTone.name}}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -55,8 +56,9 @@
     </ion-item>
     <ion-item>
       <ion-label>Music</ion-label>
-      <ion-select [disabled]="!musicEnabled" [(ngModel)]="musicIndex" (ionChange)="changedMusicIndex()" interface="popover">
-        <ion-select-option *ngFor="let music of settings.getBackgroundMusics(), let i = index"
+      <ion-select [disabled]="!musicEnabled" [(ngModel)]="musicIndex" (ionChange)="changedMusicIndex()"
+                  interface="popover">
+        <ion-select-option *ngFor="let music of profileService.getBackgroundMusics(), let i = index"
                            [value]="i">{{music.name}}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -69,9 +71,10 @@
     <ion-item>
       <ion-label (click)="showHelp('Music restarts', 'music_restart')">
         Music restarts
-        <ion-icon name="help"  class="help-icon"></ion-icon>
+        <ion-icon name="help" class="help-icon"></ion-icon>
       </ion-label>
-      <ion-toggle [disabled]="!musicEnabled" [(ngModel)]="restartMusic" (ionChange)="changedRestartMusic()"></ion-toggle>
+      <ion-toggle [disabled]="!musicEnabled" [(ngModel)]="restartMusic"
+                  (ionChange)="changedRestartMusic()"></ion-toggle>
     </ion-item>
 
     <ion-list-header color="medium">Profile</ion-list-header>
@@ -81,15 +84,15 @@
     </ion-item>
     <ion-item>
       <ion-label>Select profile</ion-label>
-      <ion-select [disabled]="settings.profiles.profiles.length === 1" [(ngModel)]="selectedProfile"
+      <ion-select [disabled]="profileService.profiles.profiles.length === 1" [(ngModel)]="selectedProfile"
                   (ionChange)="changedProfile()" interface="popover">
-        <ion-select-option *ngFor="let profile of settings.profiles.profiles"
+        <ion-select-option *ngFor="let profile of profileService.profiles.profiles"
                            [value]="profile.name">{{profile.name}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-label>Remove current profile</ion-label>
-      <ion-button [disabled]="settings.profile.name === 'Default'" (click)="confirmDelete()">Remove</ion-button>
+      <ion-button [disabled]="profileService.profile.name === 'Default'" (click)="confirmDelete()">Remove</ion-button>
     </ion-item>
   </ion-list>
 </ion-content>

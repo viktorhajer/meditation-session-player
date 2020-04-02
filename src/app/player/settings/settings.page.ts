@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {AlertController, ModalController} from '@ionic/angular';
-import {SettingsService} from '../../services/settings.service';
+import {ProfileService} from '../../services/profile.service';
 import {BackgroundMusicService} from '../../services/background-music.service';
 import {NotificationService} from '../../services/notification.service';
 import {HELP} from '../../models/help.model';
@@ -25,63 +25,65 @@ export class SettingsPage {
   selectedProfile: string;
 
   constructor(private modalCtrl: ModalController,
-              private settings: SettingsService,
               private notification: NotificationService,
               private alertController: AlertController,
+              public profileService: ProfileService,
               public bgMusic: BackgroundMusicService) {
     this.fillSettingsForm();
-    this.settings.changeProfile.subscribe(() => this.fillSettingsForm());
+    this.profileService.changeProfile.subscribe(() => this.fillSettingsForm());
   }
 
   changedNotificationEnabled() {
-    this.settings.setNotificationEnabled(this.notificationEnabled);
+    this.profileService.setNotificationEnabled(this.notificationEnabled);
   }
 
   changedNotificationType() {
-    this.settings.setNotificationType(this.notificationType);
+    this.profileService.setNotificationType(this.notificationType);
   }
 
   changedRingToneIndex() {
-    this.settings.setRingToneIndex(this.ringToneIndex);
+    this.profileService.setRingToneIndex(this.ringToneIndex);
   }
 
   changedTimerEnabled() {
     this.notification.resetInterval();
-    this.settings.setTimerEnabled(this.timerEnabled);
+    this.profileService.setTimerEnabled(this.timerEnabled);
   }
 
   changedTimerInterval() {
     this.notification.resetInterval();
     const interval = this.timerInterval.split(',')
       .map(parts => parts.trim()).filter(p => !isNaN(Number(p))).map(p => Number(p));
-    this.settings.setTimerInterval(interval);
+    this.profileService.setTimerInterval(interval);
   }
 
   changedMusicEnabled() {
-    this.settings.setMusicEnabled(this.musicEnabled);
+    this.profileService.setMusicEnabled(this.musicEnabled);
     this.bgMusic.refreshMusic();
   }
 
   changedMusicIndex() {
-    this.settings.setMusicIndex(this.musicIndex);
+    this.profileService.setMusicIndex(this.musicIndex);
     this.bgMusic.refreshMusic();
   }
 
   changedMusicVolume() {
-    this.settings.setMusicVolume(this.musicVolume);
+    this.profileService.setMusicVolume(this.musicVolume);
     this.bgMusic.refreshMusic();
   }
 
   changedRestartMusic() {
-    this.settings.setRestartMusic(this.restartMusic);
+    this.profileService.setRestartMusic(this.restartMusic);
   }
 
   changedThemeIndex() {
-    this.settings.setThemeIndex(this.themeIndex);
+    this.profileService.setThemeIndex(this.themeIndex);
   }
 
   changedProfile() {
-    this.settings.setProfile(this.selectedProfile);
+    if (this.profileService.profile.name !== this.selectedProfile) {
+      this.profileService.setProfile(this.selectedProfile);
+    }
   }
 
   showHelp(subHeader = '', messageKey = '') {
@@ -97,8 +99,8 @@ export class SettingsPage {
           text: 'Ok',
           handler: (data) => {
             const name = data.name.trim();
-            if (!!data.name.trim().length && !this.settings.isProfileNameExists(name)) {
-              this.settings.newProfile(data.name.trim());
+            if (!!data.name.trim().length && !this.profileService.isProfileNameExists(name)) {
+              this.profileService.newProfile(data.name.trim());
             }
           }
         }]
@@ -110,7 +112,7 @@ export class SettingsPage {
       header: 'Confirmation',
       message: 'Are you sure to delete the profile?',
       buttons: [
-        {text: 'Yes', handler: () => this.settings.deleteCurrentProfile()},
+        {text: 'Yes', handler: () => this.profileService.deleteCurrentProfile()},
         {text: 'No', role: 'cancel', cssClass: 'secondary'}]
     }).then(t => t.present());
   }
@@ -120,16 +122,16 @@ export class SettingsPage {
   }
 
   private fillSettingsForm() {
-    this.notificationEnabled = this.settings.profile.notificationEnabled;
-    this.notificationType = this.settings.profile.notificationType;
-    this.ringToneIndex = this.settings.profile.ringToneIndex;
-    this.timerEnabled = this.settings.profile.timerEnabled;
-    this.timerInterval = this.settings.profile.timerInterval.join(',');
-    this.musicEnabled = this.settings.profile.musicEnabled;
-    this.musicIndex = this.settings.profile.musicIndex;
-    this.musicVolume = this.settings.profile.musicVolume;
-    this.restartMusic = this.settings.profile.restartMusic;
-    this.themeIndex = this.settings.profile.themeIndex;
-    this.selectedProfile = this.settings.profile.name;
+    this.notificationEnabled = this.profileService.profile.notificationEnabled;
+    this.notificationType = this.profileService.profile.notificationType;
+    this.ringToneIndex = this.profileService.profile.ringToneIndex;
+    this.timerEnabled = this.profileService.profile.timerEnabled;
+    this.timerInterval = this.profileService.profile.timerInterval.join(',');
+    this.musicEnabled = this.profileService.profile.musicEnabled;
+    this.musicIndex = this.profileService.profile.musicIndex;
+    this.musicVolume = this.profileService.profile.musicVolume;
+    this.restartMusic = this.profileService.profile.restartMusic;
+    this.themeIndex = this.profileService.profile.themeIndex;
+    this.selectedProfile = this.profileService.profile.name;
   }
 }

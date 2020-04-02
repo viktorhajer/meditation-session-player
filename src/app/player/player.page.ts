@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {LoadingController, ModalController} from '@ionic/angular';
-import {SettingsPage} from './components/settings.page';
-import {SettingsService} from '../services/settings.service';
+import {SettingsPage} from './settings/settings.page';
+import {ProfileService} from '../services/profile.service';
 import {NotificationService} from '../services/notification.service';
 import {BackgroundMusicService} from '../services/background-music.service';
 import {SessionService} from '../services/session.service';
@@ -50,12 +50,11 @@ export class PlayerPage implements AfterViewInit {
   constructor(private loadingCtrl: LoadingController,
               private modalController: ModalController,
               private bgMusic: BackgroundMusicService,
-              private settings: SettingsService,
               public sessionService: SessionService,
               public notification: NotificationService,
-              public settingsService: SettingsService) {
+              public profileService: ProfileService) {
     this.refreshDocuments();
-    this.settings.changeProfile.subscribe(() => this.refreshDocuments());
+    this.profileService.changeProfile.subscribe(() => this.refreshDocuments());
   }
 
   ngAfterViewInit() {
@@ -77,7 +76,7 @@ export class PlayerPage implements AfterViewInit {
 
     this.audioElement.addEventListener('ended', () => {
       this.notification.ring().then(() => {
-        if (this.isLastPlaying() || !this.settingsService.isRepeatEnabled()) {
+        if (this.isLastPlaying() || !this.profileService.isRepeatEnabled()) {
           this.resetState();
         } else {
           this.bgMusic.stop();
@@ -110,7 +109,7 @@ export class PlayerPage implements AfterViewInit {
   }
 
   likeSession(session: Session) {
-    this.settingsService.toggleFavorite(session.id);
+    this.profileService.toggleFavorite(session.id);
     this.refreshDocuments();
   }
 
@@ -179,7 +178,7 @@ export class PlayerPage implements AfterViewInit {
   }
 
   toggleSpeed() {
-    this.settingsService.toggleSpeed();
+    this.profileService.toggleSpeed();
     this.setSpeed();
   }
 
@@ -190,6 +189,10 @@ export class PlayerPage implements AfterViewInit {
       this.pause();
       modal.present();
     });
+  }
+
+  openMala() {
+    // TODO
   }
 
   get audioElement(): HTMLAudioElement {
@@ -210,7 +213,7 @@ export class PlayerPage implements AfterViewInit {
   }
 
   private setSpeed() {
-    if (this.settingsService.isSpeedEnabled()) {
+    if (this.profileService.isSpeedEnabled()) {
       this.audioElement.playbackRate = 1.1;
     } else {
       this.audioElement.playbackRate = 1;

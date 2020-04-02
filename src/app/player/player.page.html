@@ -22,8 +22,8 @@
         <ng-container *ngIf="notification.isTimerActive()">| <ion-icon name="alarm-sharp"></ion-icon> {{notification.countdownText}}</ng-container>
       </ion-col>
       <ion-col class="ion-justify-content-end">
-        <ion-icon name="repeat-outline" (click)="settingsService.toggleRepeat()"
-                  color="{{ settingsService.isRepeatEnabled() ? 'primary' : 'medium'}}"></ion-icon>
+        <ion-icon name="repeat-outline" (click)="profileService.toggleRepeat()"
+                  color="{{ profileService.isRepeatEnabled() ? 'primary' : 'medium'}}"></ion-icon>
         <ion-icon name="chevron-down-outline" *ngIf="sessionService.isAscendingOrder()"
                   (click)="changeSessionListOrder()"></ion-icon>
         <ion-icon name="chevron-up-outline" *ngIf="!sessionService.isAscendingOrder()"

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {RingToneModel} from '../models/ringTone.model';
-import {RING_TONE_LIST, SettingsService} from './settings.service';
+import {RING_TONE_LIST, ProfileService} from './profile.service';
 import {NotificationType} from '../models/notification.model';
 import {Vibration} from '@ionic-native/vibration/ngx';
 import {DateHelper} from './date.helper';
@@ -14,7 +14,7 @@ export class NotificationService {
   private timerIndex = 0;
   countdownText = '';
 
-  constructor(private settingsService: SettingsService,
+  constructor(private profileService: ProfileService,
               private vibration: Vibration) {
   }
 
@@ -23,7 +23,7 @@ export class NotificationService {
   }
 
   ring(): Promise<void> {
-    const notificationEnabled = this.settingsService.profile.notificationEnabled;
+    const notificationEnabled = this.profileService.profile.notificationEnabled;
     return this.playNotification(notificationEnabled)
       .then(() => this.vibrateDevice(notificationEnabled));
   }
@@ -33,7 +33,7 @@ export class NotificationService {
       if (this.timerIndex !== 0) {
         this.playNotification().then(() => this.vibrateDevice());
       }
-      const list = this.settingsService.profile.timerInterval;
+      const list = this.profileService.profile.timerInterval;
       if (this.timerIndex < list.length) {
         this.timerStarted = Date.now();
         this.timer = setTimeout(() => {
@@ -61,18 +61,18 @@ export class NotificationService {
     if (!this.timerStarted) {
       this.countdownText = '';
     }
-    const diff1 = this.settingsService.profile.timerInterval.length - this.timerIndex;
-    const diff2 = this.settingsService.profile.timerInterval[this.timerIndex] -
+    const diff1 = this.profileService.profile.timerInterval.length - this.timerIndex;
+    const diff2 = this.profileService.profile.timerInterval[this.timerIndex] -
       Math.floor((Date.now() - this.timerStarted) / 1000);
     this.countdownText = DateHelper.formatTime(diff2) + ` (${diff1})`;
   }
 
   private isTimerEnabled(): boolean {
-    return this.settingsService.profile.timerEnabled && this.settingsService.profile.timerInterval.length > 0;
+    return this.profileService.profile.timerEnabled && this.profileService.profile.timerInterval.length > 0;
   }
 
   private getSelectedRingTone(): RingToneModel {
-    return RING_TONE_LIST[this.settingsService.profile.ringToneIndex];
+    return RING_TONE_LIST[this.profileService.profile.ringToneIndex];
   }
 
   private playNotification(enabled = true): Promise<void> {
@@ -93,12 +93,12 @@ export class NotificationService {
   }
 
   private isRingingTypeEnabled(): boolean {
-    return this.settingsService.profile.notificationType === NotificationType.RINGING
-        || this.settingsService.profile.notificationType === NotificationType.RINGING_AND_VIBRATION;
+    return this.profileService.profile.notificationType === NotificationType.RINGING
+        || this.profileService.profile.notificationType === NotificationType.RINGING_AND_VIBRATION;
   }
 
   private isVibrationTypeEnabled(): boolean {
-    return this.settingsService.profile.notificationType === NotificationType.VIBRATION
-        || this.settingsService.profile.notificationType === NotificationType.RINGING_AND_VIBRATION;
+    return this.profileService.profile.notificationType === NotificationType.VIBRATION
+        || this.profileService.profile.notificationType === NotificationType.RINGING_AND_VIBRATION;
   }
 }
