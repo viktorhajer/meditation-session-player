@@ -10,8 +10,8 @@ export class SessionService {
   constructor(private profileService: ProfileService) {
   }
 
-  getSessions(): Promise<Session[]> {
-    const list = [
+  getSessions(hidden = false): Promise<Session[]> {
+    let list = [
       new Session({id: 0, name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: 'music_example.mp3', duration: '12:05'}),
       new Session({id: 1, name: 'OM AKHAND - Healing Power of OM.mp3', url: 'example.mp3', duration: '01:00'}),
       new Session({id: 2, name: 'Meditation To Release Inner Tension.mp3', url: 'music_example.mp3', duration: '19:48'}),
@@ -20,6 +20,7 @@ export class SessionService {
     ];
     this.setFavorites(list);
     this.setHidden(list);
+    list = list.filter(s => s.hidden === hidden);
     list.sort((s1, s2) => this.sortSession(s1, s2));
     return Promise.resolve(list);
   }
