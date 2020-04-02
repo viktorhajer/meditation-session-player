@@ -36,11 +36,11 @@ export class Session {
   }
 
   get hidden(): boolean {
-    return this.row.liked;
+    return this.row.hidden;
   }
 
   set hidden(flag: boolean) {
-    this.row.liked = flag;
+    this.row.hidden = flag;
   }
 
   getTitle(): string {
