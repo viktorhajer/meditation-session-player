@@ -44,6 +44,7 @@ export class PlayerPage implements AfterViewInit {
   sessions: Session[] = [];
   currentSession: Session;
   displayFooter = 'inactive';
+  organizeMod = false;
   private sessionHistory = [];
   private loadingModal: Promise<HTMLIonLoadingElement>;
   private seekTimeout: any;
@@ -87,36 +88,44 @@ export class PlayerPage implements AfterViewInit {
     });
   }
 
+  getSessions(): Session[] {
+    return this.organizeMod ? this.sessions : this.sessions.filter(s => !s.hidden);
+  }
+
   openSession(session: Session) {
-    this.audioElement.pause();
-    this.audioElement.currentTime = 0;
-    if (!!this.currentSession && this.currentSession.id === session.id) {
-      this.resetState();
+    if (this.organizeMod) {
+      this.hideSession(session);
     } else {
-      this.notification.resetInterval();
-      this.pushIndexHistory(session.id);
-      this.currentSession = session;
-      this.audioElement.src = '/assets/' + this.currentSession.url;
-      this.audioElement.play().then(() => {
-        this.displayFooter = 'active';
-        this.setSpeed();
-      });
-      const range = document.querySelector('ion-range');
-      if (!!range) {
-        range.value = 0;
+      this.audioElement.pause();
+      this.audioElement.currentTime = 0;
+      if (!!this.currentSession && this.currentSession.url === session.url) {
+        this.resetState();
+      } else {
+        this.notification.resetInterval();
+        this.pushHistory(session.url);
+        this.currentSession = session;
+        this.audioElement.src = this.currentSession.url;
+        this.audioElement.play().then(() => {
+          this.displayFooter = 'active';
+          this.setSpeed();
+        });
+        const range = document.querySelector('ion-range');
+        if (!!range) {
+          range.value = 0;
+        }
+        this.notification.startInterval();
+        this.bgMusic.play();
       }
-      this.notification.startInterval();
-      this.bgMusic.play();
     }
   }
 
   likeSession(session: Session) {
-    this.profileService.toggleLike(session.id);
+    this.profileService.toggleLike(session.url);
     this.refreshDocuments();
   }
 
   hideSession(session: Session) {
-    this.profileService.toggleHide(session.id);
+    this.profileService.toggleHide(session.url);
     this.refreshDocuments();
   }
 
@@ -191,11 +200,18 @@ export class PlayerPage implements AfterViewInit {
     this.setSpeed();
   }
 
+  toggleOrganizeMod() {
+    this.organizeMod = !this.organizeMod;
+    if (this.organizeMod) {
+      this.resetState();
+    }
+  }
+
   openSettings() {
     this.modalController.create({
       component: SettingsPage
     }).then(modal => {
-      // this.pause();
+      this.pause();
       modal.present();
     });
   }
@@ -234,6 +250,8 @@ export class PlayerPage implements AfterViewInit {
   }
 
   private resetState() {
+    this.audioElement.pause();
+    this.audioElement.currentTime = 0;
     this.currentSession = null;
     this.displayFooter = 'inactive';
     this.notification.resetInterval();
@@ -258,7 +276,7 @@ export class PlayerPage implements AfterViewInit {
     return this.loadingModal;
   }
 
-  private pushIndexHistory(index: number) {
+  private pushHistory(index: string) {
     this.sessionHistory.push(index);
     if (this.sessionHistory.length > (this.sessions.length - 1)) {
       this.sessionHistory = this.sessionHistory.slice(Math.floor(this.sessions.length / 2));
