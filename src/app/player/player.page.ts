@@ -45,7 +45,6 @@ export class PlayerPage implements AfterViewInit {
   currentSession: Session;
   displayFooter = 'inactive';
   organizeMod = false;
-  private sessionHistory = [];
   private loadingModal: Promise<HTMLIonLoadingElement>;
   private seekTimeout: any;
 
@@ -102,7 +101,6 @@ export class PlayerPage implements AfterViewInit {
         this.resetState();
       } else {
         this.notification.resetInterval();
-        this.pushHistory(session.url);
         this.currentSession = session;
         this.audioElement.src = this.currentSession.url;
         this.audioElement.play().then(() => {
@@ -129,12 +127,25 @@ export class PlayerPage implements AfterViewInit {
     this.refreshDocuments();
   }
 
+  showAll() {
+    this.profileService.toggleHide([]);
+    this.refreshDocuments();
+  }
+
+  hideAll() {
+    this.profileService.toggleHide(this.getSessions().map(s => s.url));
+    this.refreshDocuments();
+  }
+
   pickRandomSession() {
-    let random = Math.floor(Math.random() * this.sessions.length);
-    while (this.sessionHistory.indexOf(random) !== -1) {
-      random = Math.floor(Math.random() * this.sessions.length);
+    const sessions = this.getSessions();
+    if (sessions.length > 0) {
+      let random = Math.floor(Math.random() * sessions.length);
+      while (this.currentSession === sessions[random]) {
+        random = Math.floor(Math.random() * sessions.length);
+      }
+      this.openSession(sessions[random]);
     }
-    this.openSession(this.sessions[random]);
   }
 
   changeSessionListOrder() {
@@ -243,7 +254,7 @@ export class PlayerPage implements AfterViewInit {
 
   private setSpeed() {
     if (this.profileService.isSpeedEnabled()) {
-      this.audioElement.playbackRate = 1.1;
+      this.audioElement.playbackRate = 1.2;
     } else {
       this.audioElement.playbackRate = 1;
     }
@@ -274,12 +285,5 @@ export class PlayerPage implements AfterViewInit {
       });
     }
     return this.loadingModal;
-  }
-
-  private pushHistory(index: string) {
-    this.sessionHistory.push(index);
-    if (this.sessionHistory.length > (this.sessions.length - 1)) {
-      this.sessionHistory = this.sessionHistory.slice(Math.floor(this.sessions.length / 2));
-    }
   }
 }

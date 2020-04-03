@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Session} from '../models/session.model';
 import {ProfileService} from './profile.service';
+import {DateHelper} from './date.helper';
 
 @Injectable({providedIn: 'root'})
 export class SessionService {
@@ -20,6 +21,7 @@ export class SessionService {
     this.setFavorites(list);
     this.setHidden(list);
     list.sort((s1, s2) => this.sortSession(s1, s2));
+    this.checkMusicDuration(list);
     return Promise.resolve(list);
   }
 
@@ -56,6 +58,16 @@ export class SessionService {
     const hidden = this.profileService.profile.hidden;
     sessions.forEach(s => {
       s.hidden = hidden.some(url => url === s.url);
+    });
+  }
+
+  private checkMusicDuration(list: Session[]) {
+    list.forEach(s => {
+      const audioTmp = document.createElement('audio') as HTMLAudioElement;
+      audioTmp.src = s.url;
+      audioTmp.addEventListener('loadedmetadata', () => {
+        s.duration = DateHelper.formatTime(Math.round(audioTmp.duration));
+      });
     });
   }
 }

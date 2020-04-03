@@ -157,11 +157,15 @@ export class ProfileService {
     this.saveProfile();
   }
 
-  toggleHide(url: string) {
-    const length = this.profile.hidden.length;
-    this.profile.hidden = this.profile.hidden.filter(h => h !== url);
-    if (length === this.profile.hidden.length) {
-      this.profile.hidden.push(url);
+  toggleHide(url: (string | string[])) {
+    if (typeof url === 'string') {
+      const length = this.profile.hidden.length;
+      this.profile.hidden = this.profile.hidden.filter(h => h !== url);
+      if (length === this.profile.hidden.length) {
+        this.profile.hidden.push(url as string);
+      }
+    } else {
+      this.profile.hidden = url;
     }
     this.saveProfile();
   }

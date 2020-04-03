@@ -1,6 +1,7 @@
 export class RowSession {
   name: string;
   url: string;
+  duration?: string;
   liked?: boolean;
   hidden?: boolean;
 }
@@ -15,6 +16,14 @@ export class Session {
 
   get url(): string {
     return this.row.url;
+  }
+
+  get duration(): string {
+    return this.row.duration;
+  }
+
+  set duration(duration: string) {
+    this.row.duration = duration;
   }
 
   get liked(): boolean {

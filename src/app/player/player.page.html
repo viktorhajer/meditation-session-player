@@ -15,12 +15,12 @@
     <h2 id="app-title"
         [class.small]="!!currentSession">{{ !!currentSession ? currentSession?.getTitle() : 'Hari OM!' }}</h2>
   </div>
-  <ion-list *ngIf="getSessions().length" mode="ios">
+  <ion-list mode="ios">
     <ion-list-header>
       <ion-col size="8" class="ion-justify-content-start ion-align-items-center information-line">
         <ng-container *ngIf="!organizeMod">
           No.: {{getSessions().length}}
-          <ion-icon name="sync-circle-outline" (click)="pickRandomSession()"></ion-icon>
+          <ion-icon name="sync-circle-outline" (click)="pickRandomSession()" *ngIf="!!getSessions().length"></ion-icon>
           <ion-icon name="settings-outline" (click)="toggleOrganizeMod()"></ion-icon>
           <ng-container *ngIf="notification.isTimerActive()">
             |
@@ -30,6 +30,8 @@
         </ng-container>
         <ng-container *ngIf="organizeMod">
           <ion-icon name="return-up-back-outline" (click)="toggleOrganizeMod()"></ion-icon>
+          <ion-button (click)="showAll()">Show all</ion-button>
+          <ion-button (click)="hideAll()">Hide all</ion-button>
         </ng-container>
       </ion-col>
       <ion-col class="ion-justify-content-end">
@@ -64,7 +66,10 @@
       </ion-col>
       <ion-col *ngIf="currentSession?.url !== session.url && !organizeMod" class="ion-justify-content-end"
                (click)="openSession(session)">
-        <ion-icon name="play"></ion-icon>
+        <p class="selected-label">
+          {{ session.duration }}
+          <ion-icon name="play"></ion-icon>
+        </p>
       </ion-col>
     </ion-item>
   </ion-list>
