@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {RingToneModel} from '../models/ringTone.model';
-import {RING_TONE_LIST, ProfileService} from './profile.service';
+import {ProfileService, RING_TONE_LIST} from './profile.service';
 import {NotificationType} from '../models/notification.model';
 import {Vibration} from '@ionic-native/vibration/ngx';
 import {DateHelper} from './date.helper';
@@ -75,23 +75,23 @@ export class NotificationService {
     this.countdownText = DateHelper.formatTime(diff2) + ` (${diff1})`;
   }
 
-  private isTimerEnabled(): boolean {
-    return this.profileService.profile.timerEnabled && this.profileService.profile.timerInterval.length > 0;
-  }
-
-  private getSelectedRingTone(): RingToneModel {
-    return RING_TONE_LIST[this.profileService.profile.ringToneIndex];
-  }
-
-  private playNotification(enabled = true): Promise<void> {
+  playNotification(enabled = true, src?: string): Promise<void> {
     if (!!this.audioElement && enabled && this.isRingingTypeEnabled()) {
-      this.audioElement.src = this.getSelectedRingTone().url;
+      this.audioElement.src = !!src ? src : this.getSelectedRingTone().url;
       this.audioElement.play();
       return new Promise((resolve) => {
         setTimeout(resolve, 1500);
       });
     }
     return Promise.resolve();
+  }
+
+  private isTimerEnabled(): boolean {
+    return this.profileService.profile.timerEnabled && this.profileService.profile.timerInterval.length > 0;
+  }
+
+  private getSelectedRingTone(): RingToneModel {
+    return RING_TONE_LIST[this.profileService.profile.ringToneIndex];
   }
 
   private vibrateDevice(enabled = true) {
@@ -102,11 +102,11 @@ export class NotificationService {
 
   private isRingingTypeEnabled(): boolean {
     return this.profileService.profile.notificationType === NotificationType.RINGING
-        || this.profileService.profile.notificationType === NotificationType.RINGING_AND_VIBRATION;
+      || this.profileService.profile.notificationType === NotificationType.RINGING_AND_VIBRATION;
   }
 
   private isVibrationTypeEnabled(): boolean {
     return this.profileService.profile.notificationType === NotificationType.VIBRATION
-        || this.profileService.profile.notificationType === NotificationType.RINGING_AND_VIBRATION;
+      || this.profileService.profile.notificationType === NotificationType.RINGING_AND_VIBRATION;
   }
 }

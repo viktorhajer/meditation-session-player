@@ -58,6 +58,7 @@ export class SettingsPage {
 
   changedRingToneIndex() {
     this.profileService.setRingToneIndex(this.ringToneIndex);
+    this.notification.playNotification(true);
   }
 
   changedTimerEnabled() {
