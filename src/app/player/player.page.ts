@@ -44,6 +44,7 @@ export class PlayerPage implements AfterViewInit {
   sessions: Session[] = [];
   currentSession: Session;
   displayFooter = 'inactive';
+  organizeMod = false;
   private sessionHistory = [];
   private loadingModal: Promise<HTMLIonLoadingElement>;
   private seekTimeout: any;
@@ -87,26 +88,34 @@ export class PlayerPage implements AfterViewInit {
     });
   }
 
+  getSessions(): Session[] {
+    return this.organizeMod ? this.sessions : this.sessions.filter(s => !s.hidden);
+  }
+
   openSession(session: Session) {
-    this.audioElement.pause();
-    this.audioElement.currentTime = 0;
-    if (!!this.currentSession && this.currentSession.url === session.url) {
-      this.resetState();
+    if (this.organizeMod) {
+      this.hideSession(session);
     } else {
-      this.notification.resetInterval();
-      this.pushHistory(session.url);
-      this.currentSession = session;
-      this.audioElement.src = this.currentSession.url;
-      this.audioElement.play().then(() => {
-        this.displayFooter = 'active';
-        this.setSpeed();
-      });
-      const range = document.querySelector('ion-range');
-      if (!!range) {
-        range.value = 0;
+      this.audioElement.pause();
+      this.audioElement.currentTime = 0;
+      if (!!this.currentSession && this.currentSession.url === session.url) {
+        this.resetState();
+      } else {
+        this.notification.resetInterval();
+        this.pushHistory(session.url);
+        this.currentSession = session;
+        this.audioElement.src = this.currentSession.url;
+        this.audioElement.play().then(() => {
+          this.displayFooter = 'active';
+          this.setSpeed();
+        });
+        const range = document.querySelector('ion-range');
+        if (!!range) {
+          range.value = 0;
+        }
+        this.notification.startInterval();
+        this.bgMusic.play();
       }
-      this.notification.startInterval();
-      this.bgMusic.play();
     }
   }
 
@@ -191,6 +200,13 @@ export class PlayerPage implements AfterViewInit {
     this.setSpeed();
   }
 
+  toggleOrganizeMod() {
+    this.organizeMod = !this.organizeMod;
+    if (this.organizeMod) {
+      this.resetState();
+    }
+  }
+
   openSettings() {
     this.modalController.create({
       component: SettingsPage
@@ -234,6 +250,8 @@ export class PlayerPage implements AfterViewInit {
   }
 
   private resetState() {
+    this.audioElement.pause();
+    this.audioElement.currentTime = 0;
     this.currentSession = null;
     this.displayFooter = 'inactive';
     this.notification.resetInterval();

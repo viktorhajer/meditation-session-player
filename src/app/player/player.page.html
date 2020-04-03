@@ -10,16 +10,27 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div padding id="app-section" [class.small]="!!currentSession" (click)="openMala()">
+  <div id="app-section" [class.small]="!!currentSession" (click)="openMala()">
     <img src="/assets/icon/meditation-icon.jpg" [class.small]="!!currentSession">
-    <h2 id="app-title" [class.small]="!!currentSession">{{ !!currentSession ? currentSession?.getTitle() : 'Hari OM!' }}</h2>
+    <h2 id="app-title"
+        [class.small]="!!currentSession">{{ !!currentSession ? currentSession?.getTitle() : 'Hari OM!' }}</h2>
   </div>
-  <ion-list *ngIf="sessions.length" mode="ios">
+  <ion-list *ngIf="getSessions().length" mode="ios">
     <ion-list-header>
       <ion-col size="8" class="ion-justify-content-start ion-align-items-center information-line">
-        No. of sessions: {{sessions.length}}
-        <ion-icon name="sync-circle-outline" (click)="pickRandomSession()"></ion-icon>
-        <ng-container *ngIf="notification.isTimerActive()">| <ion-icon name="alarm-sharp"></ion-icon> {{notification.countdownText}}</ng-container>
+        <ng-container *ngIf="!organizeMod">
+          No.: {{getSessions().length}}
+          <ion-icon name="sync-circle-outline" (click)="pickRandomSession()"></ion-icon>
+          <ion-icon name="settings-outline" (click)="toggleOrganizeMod()"></ion-icon>
+          <ng-container *ngIf="notification.isTimerActive()">
+            |
+            <ion-icon name="alarm-sharp"></ion-icon>
+            {{notification.countdownText}}
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="organizeMod">
+          <ion-icon name="return-up-back-outline" (click)="toggleOrganizeMod()"></ion-icon>
+        </ng-container>
       </ion-col>
       <ion-col class="ion-justify-content-end">
         <ion-icon name="repeat-outline" (click)="profileService.toggleRepeat()"
@@ -30,23 +41,29 @@
                   (click)="changeSessionListOrder()"></ion-icon>
       </ion-col>
     </ion-list-header>
-    <ion-item *ngFor="let session of sessions; let i = index" text-wrap
-              color="{{ currentSession?.url === session.url ? 'light' : ''}}">
-      <ion-col size="1" class="ion-justify-content-start" (click)="likeSession(session)">
+    <ion-item *ngFor="let session of getSessions()" color="{{ currentSession?.url === session.url ? 'light' : ''}}"
+              [class.hidden]="session.hidden">
+      <ion-col size="1" class="ion-justify-content-start" (click)="likeSession(session)" *ngIf="!organizeMod">
         <ion-icon color="secondary" name="bookmark" *ngIf="session.liked"></ion-icon>
         <ion-icon name="bookmark-outline" *ngIf="!session.liked"></ion-icon>
+      </ion-col>
+      <ion-col size="1" class="ion-justify-content-start" (click)="hideSession(session)" *ngIf="organizeMod">
+        <ion-icon name="eye-outline" *ngIf="!session.hidden"></ion-icon>
+        <ion-icon name="eye-off-outline" *ngIf="session.hidden"></ion-icon>
       </ion-col>
       <ion-col size="8" class="ion-justify-content-start" (click)="openSession(session)">
         <p class="file-name">{{ session.name }}</p>
       </ion-col>
-      <ion-col *ngIf="currentSession?.url === session.url" class="ion-justify-content-end" (click)="openSession(session)">
+      <ion-col *ngIf="currentSession?.url === session.url && !organizeMod" class="ion-justify-content-end"
+               (click)="openSession(session)">
         <p class="selected-label">
           <label>SELECTED <br> {{getCurrentTime()}}</label>
           <img src="/assets/anim.gif" *ngIf="!audioElement.paused">
           <ion-icon name="pause" *ngIf="audioElement.paused"></ion-icon>
         </p>
       </ion-col>
-      <ion-col *ngIf="currentSession?.url !== session.url" class="ion-justify-content-end" (click)="openSession(session)">
+      <ion-col *ngIf="currentSession?.url !== session.url && !organizeMod" class="ion-justify-content-end"
+               (click)="openSession(session)">
         <ion-icon name="play"></ion-icon>
       </ion-col>
     </ion-item>
@@ -55,13 +72,14 @@
 
 <ion-footer *ngIf="!!currentSession" [@showHide]="displayFooter">
   <ion-toolbar color="secondary">
-    <ion-range min="0" color="light" [max]="getDurationSec()" (ionChange)="onSeekChange($event)" [pin]="true" [debounce]="200">
+    <ion-range min="0" color="light" [max]="getDurationSec()" (ionChange)="onSeekChange($event)" [pin]="true"
+               [debounce]="200">
       <ion-label color="light" slot="start">{{ getCurrentTime() }}</ion-label>
       <ion-label color="light" slot="end">{{ getDuration() }}</ion-label>
     </ion-range>
   </ion-toolbar>
 
-  <ion-toolbar color="primary" padding>
+  <ion-toolbar color="primary">
     <ion-grid>
       <ion-row class="ion-align-items-center" id="media-controls">
         <ion-col class="ion-justify-content-center">

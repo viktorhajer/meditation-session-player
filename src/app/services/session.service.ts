@@ -10,8 +10,8 @@ export class SessionService {
   constructor(private profileService: ProfileService) {
   }
 
-  getSessions(all = true, hidden = false): Promise<Session[]> {
-    let list = [
+  getSessions(): Promise<Session[]> {
+    const list = [
       new Session({name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: '/assets/music_example.mp3'}),
       new Session({name: 'OM AKHAND - Healing Power of OM.mp3', url: '/assets/example.mp3'}),
       new Session({name: 'Meditation To Improve.mp3', url: '/assets/ringTones/china-bell-ring.mp3'}),
@@ -19,9 +19,6 @@ export class SessionService {
     ];
     this.setFavorites(list);
     this.setHidden(list);
-    if (!all) {
-      list = list.filter(s => s.hidden === hidden);
-    }
     list.sort((s1, s2) => this.sortSession(s1, s2));
     return Promise.resolve(list);
   }
@@ -53,7 +50,6 @@ export class SessionService {
     sessions.forEach(s => {
       s.liked = favorites.some(url => url === s.url);
     });
-    console.log(sessions);
   }
 
   private setHidden(sessions: Session[]) {
