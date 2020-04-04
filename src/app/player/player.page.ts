@@ -9,6 +9,7 @@ import {SessionService} from '../services/session.service';
 import {Session} from '../models/session.model';
 import {DateHelper} from '../services/date.helper';
 import {MalaPage} from './mala/mala.page';
+import {LyricsPage} from './lyrics/lyrics.page';
 
 @Component({
   selector: 'app-player',
@@ -243,6 +244,16 @@ export class PlayerPage implements AfterViewInit {
 
   setProfile(name: string) {
     this.profileService.setProfile(name);
+  }
+
+  isLyricsAvailable(): boolean {
+    return !!this.currentSession;
+  }
+
+  openLyrics() {
+    this.modalController.create({
+      component: LyricsPage
+    }).then(modal => modal.present());
   }
 
   get audioElement(): HTMLAudioElement {

@@ -6,6 +6,7 @@ import {RouterModule} from '@angular/router';
 import {PlayerPage} from './player.page';
 import {SettingsPage} from './settings/settings.page';
 import {MalaPage} from './mala/mala.page';
+import {LyricsPage} from './lyrics/lyrics.page';
 
 @NgModule({
   imports: [
@@ -19,8 +20,8 @@ import {MalaPage} from './mala/mala.page';
       }
     ])
   ],
-  declarations: [PlayerPage, SettingsPage, MalaPage],
-  entryComponents: [SettingsPage, MalaPage]
+  declarations: [PlayerPage, SettingsPage, MalaPage, LyricsPage],
+  entryComponents: [SettingsPage, MalaPage, LyricsPage]
 })
 export class PlayerModule {
 }

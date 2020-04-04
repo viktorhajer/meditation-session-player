@@ -26,7 +26,7 @@
   </div>
   <ion-list mode="ios">
     <ion-list-header>
-      <ion-col size="8" class="ion-justify-content-start ion-align-items-center information-line">
+      <ion-col size="7" class="ion-justify-content-start ion-align-items-center information-line">
         <ng-container *ngIf="!organizeMod">
           No.: {{getSessions().length}}
           <ion-icon name="sync-circle-outline" (click)="pickRandomSession()" *ngIf="!!getSessions().length"></ion-icon>
@@ -44,6 +44,7 @@
         </ng-container>
       </ion-col>
       <ion-col class="ion-justify-content-end">
+        <ion-icon name="document-text-outline" (click)="openLyrics()" color="primary" *ngIf="isLyricsAvailable()"></ion-icon>
         <ion-icon name="repeat-outline" (click)="profileService.toggleRepeat()"
                   color="{{ profileService.isRepeatEnabled() ? 'primary' : 'medium'}}"></ion-icon>
         <ion-icon name="chevron-down-outline" *ngIf="sessionService.isAscendingOrder()"
