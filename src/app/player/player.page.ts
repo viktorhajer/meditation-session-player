@@ -45,6 +45,7 @@ export class PlayerPage implements AfterViewInit {
   currentSession: Session;
   displayFooter = 'inactive';
   organizeMod = false;
+  started = false;
   private loadingModalPromise: Promise<HTMLIonLoadingElement>;
   private seekTimeout: any;
 
@@ -69,16 +70,18 @@ export class PlayerPage implements AfterViewInit {
       const range = document.querySelector('ion-range');
       if (!!range && !range.classList.contains('range-pressed')) {
         const diff = Math.abs((range.value as any) - Math.floor(this.audioElement.currentTime));
-        if (diff > 2) {
+        if (diff > 2 && this.started) {
           this.audioElement.currentTime = range.value as any;
         } else {
           range.value = this.audioElement.currentTime;
         }
       }
+      this.started = false;
       this.notification.refreshCountdownText();
     });
 
     this.audioElement.addEventListener('ended', () => {
+      this.sessionService.savePosition(this.currentSession.name, 0);
       this.notification.ring().then(() => {
         if (this.isLastPlaying() || !this.profileService.isRepeatEnabled()) {
           this.resetState();
@@ -94,10 +97,14 @@ export class PlayerPage implements AfterViewInit {
     return this.organizeMod ? this.sessions : this.sessions.filter(s => !s.hidden);
   }
 
-  openSession(session: Session) {
+  openSession(session: Session, savePosition = false) {
     if (this.organizeMod) {
       this.hideSession(session);
     } else {
+      if (this.currentSession) {
+        this.sessionService.savePosition(this.currentSession.name, savePosition ? this.audioElement.currentTime : 0);
+      }
+      this.started = true;
       this.audioElement.pause();
       this.audioElement.currentTime = 0;
       if (!!this.currentSession && this.currentSession.url === session.url) {
@@ -109,7 +116,7 @@ export class PlayerPage implements AfterViewInit {
         this.audioElement.src = this.currentSession.url;
         this.audioElement.play().then(() => {
           this.displayFooter = 'active';
-          this.setSpeed();
+          this.audioElement.currentTime = this.sessionService.getPosition(session.name);
         });
         const range = document.querySelector('ion-range');
         if (!!range) {
@@ -210,11 +217,6 @@ export class PlayerPage implements AfterViewInit {
     return this.audioElement.duration;
   }
 
-  toggleSpeed() {
-    this.profileService.toggleSpeed();
-    this.setSpeed();
-  }
-
   toggleOrganizeMod() {
     this.organizeMod = !this.organizeMod;
     if (this.organizeMod) {
@@ -260,14 +262,6 @@ export class PlayerPage implements AfterViewInit {
 
   private isLastPlaying(): boolean {
     return this.sessions.indexOf(this.currentSession) === (this.sessions.length - 1);
-  }
-
-  private setSpeed() {
-    if (this.profileService.isSpeedEnabled()) {
-      this.audioElement.playbackRate = 1.2;
-    } else {
-      this.audioElement.playbackRate = 1;
-    }
   }
 
   private resetState() {

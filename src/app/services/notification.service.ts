@@ -89,7 +89,7 @@ export class NotificationService {
     return Promise.resolve();
   }
 
-  vibrateNotification(enabled = true, sequence = [500, 100, 500]) {
+  vibrateNotification(enabled = true, sequence = [1000]) {
     if (enabled && this.isVibrationTypeEnabled()) {
       this.vibration.vibrate(sequence);
     }

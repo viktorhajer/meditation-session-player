@@ -207,15 +207,6 @@ export class ProfileService {
     this.saveProfile();
   }
 
-  isSpeedEnabled(): boolean {
-    return this.profile.speed === 1;
-  }
-
-  toggleSpeed() {
-    this.profile.speed = (this.profile.speed + 1) % 2;
-    this.saveProfile();
-  }
-
   private getSelectedThemeClass(): string {
     return THEME_LIST[this.profile.themeIndex].className;
   }

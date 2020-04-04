@@ -1,9 +1,9 @@
-<audio #audioElement autoplay></audio>
+<audio #audioElement autoplay crossorigin="anonymous"></audio>
 <audio #ringingElement></audio>
-<audio #musicElement loop></audio>
+<audio #musicElement loop crossorigin="anonymous"></audio>
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title color="light" *ngIf="!profileService.isProfileToolbarEnabled()">Meditation Session Player</ion-title>
+    <ion-title color="light" *ngIf="!profileService.isProfileToolbarEnabled()">Meditation Session Player1</ion-title>
     <ion-title color="light"
                *ngIf="profileService.isProfileToolbarEnabled()">{{profileService.getProfileName()}}</ion-title>
     <ion-buttons slot="end">
@@ -62,11 +62,11 @@
         <ion-icon name="eye-outline" *ngIf="!session.hidden"></ion-icon>
         <ion-icon name="eye-off-outline" *ngIf="session.hidden"></ion-icon>
       </ion-col>
-      <ion-col size="8" class="ion-justify-content-start" (click)="openSession(session)">
+      <ion-col size="8" class="ion-justify-content-start" (click)="openSession(session, true)">
         <p class="file-name">{{ session.name }}</p>
       </ion-col>
       <ion-col *ngIf="currentSession?.url === session.url && !organizeMod" class="ion-justify-content-end"
-               (click)="openSession(session)">
+               (click)="openSession(session, true)">
         <p class="selected-label">
           <label>SELECTED <br> {{getCurrentTime()}}</label>
           <img src="/assets/anim.gif" *ngIf="!audioElement.paused">
@@ -74,7 +74,7 @@
         </p>
       </ion-col>
       <ion-col *ngIf="currentSession?.url !== session.url && !organizeMod" class="ion-justify-content-end"
-               (click)="openSession(session)">
+               (click)="openSession(session, true)">
         <p class="selected-label">
           {{ session.duration }}
           <ion-icon name="play"></ion-icon>

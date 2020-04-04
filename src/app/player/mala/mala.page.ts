@@ -42,15 +42,15 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
         style({
           opacity: 0,
           top: '0px',
-          width: '700px',
-          height: '700px',
+          width: '600px',
+          height: '600px',
           filter: 'blur(15px)'
         })
       ),
       transition('b0 => b1', animate('150ms ease-in')),
       transition('b1 => b2', animate('150ms ease-out')),
       transition('b2 => b0', animate('150ms ease-out')),
-      transition('b0 <=> b3', animate('150ms ease-out'))
+      transition('b0 <=> b3', animate('100ms ease-out'))
     ])
   ],
   styleUrls: ['./mala.page.scss']
