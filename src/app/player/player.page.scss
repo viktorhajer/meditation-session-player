@@ -15,6 +15,7 @@ ion-list-header {
     ion-button {
       font-size: 0.8rem;
     }
+
     ion-icon {
       font-size: 1.5rem;
       margin: 0 5px;
@@ -29,6 +30,7 @@ ion-list-header {
   flex-flow: column;
   align-items: center;
   height: 180px;
+
   &.small {
     height: 130px;
   }
@@ -48,6 +50,7 @@ ion-list-header {
       top: -95px;
     }
   }
+
   img {
     transition: all 200ms ease-out;
     width: 200px;
@@ -72,10 +75,34 @@ ion-item {
 ion-icon {
   font-size: 1rem;
 }
+
 ion-header {
   ion-icon {
     font-size: 2rem;
-    margin-right: 10px;
+    margin: 0 10px;
+  }
+  .profile-box {
+    background: var(--ion-color-light);
+    color: var(--ion-color-primary);
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 4px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: bold;
+
+    .marker {
+      position: absolute;
+      background: var(--ion-color-secondary);
+      width: 12px;
+      height: 12px;
+      margin-top: 7px;
+      margin-left: 8px;
+      border-radius: 50%;
+    }
   }
 }
 
@@ -88,6 +115,7 @@ ion-header {
   ion-icon {
     margin-left: 5px;
   }
+
   img {
     width: 20px;
     margin: 0 5px;

@@ -3,8 +3,17 @@
 <audio #musicElement loop></audio>
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title color="light">Meditation Session Player</ion-title>
+    <ion-title color="light" *ngIf="!profileService.isProfileToolbarEnabled()">Meditation Session Player</ion-title>
+    <ion-title color="light"
+               *ngIf="profileService.isProfileToolbarEnabled()">{{profileService.getProfileName()}}</ion-title>
     <ion-buttons slot="end">
+      <ng-container *ngIf="profileService.isProfileToolbarEnabled()">
+        <div name="square" class="profile-box" (click)="setProfile(profile.name)"
+             *ngFor="let profile of profileService.profiles.profiles">
+          {{ profileService.getProfileLetter(profile)}}
+          <div *ngIf="profileService.isCurrentProfile(profile.name)" class="marker"></div>
+        </div>
+      </ng-container>
       <ion-icon name="options-outline" (click)="openSettings()" color="light"></ion-icon>
     </ion-buttons>
   </ion-toolbar>

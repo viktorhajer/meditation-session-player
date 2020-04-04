@@ -25,6 +25,7 @@ export class SettingsPage {
   musicVolume: number;
   restartMusic: boolean;
   themeIndex: number;
+  profileToolbarEnabled: boolean;
   selectedProfile: string;
   malaEnabled: boolean;
   malaBeads: number;
@@ -99,10 +100,12 @@ export class SettingsPage {
     this.profileService.setThemeIndex(this.themeIndex);
   }
 
+  changedProfileToolbarEnabled() {
+    this.profileService.setProfileToolbarEnabled(this.profileToolbarEnabled);
+  }
+
   changedProfile() {
-    if (this.profileService.profile.name !== this.selectedProfile) {
-      this.profileService.setProfile(this.selectedProfile);
-    }
+    this.profileService.setProfile(this.selectedProfile);
   }
 
   showHelp(subHeader = '', messageKey = '') {
@@ -173,6 +176,7 @@ export class SettingsPage {
     this.musicVolume = this.profileService.profile.musicVolume;
     this.restartMusic = this.profileService.profile.restartMusic;
     this.themeIndex = this.profileService.profile.themeIndex;
+    this.profileToolbarEnabled = this.profileService.profile.profileToolbarEnabled;
     this.selectedProfile = this.profileService.profile.name;
     this.malaEnabled = this.profileService.profile.malaEnabled;
     this.malaBeads = this.profileService.profile.malaBeads;

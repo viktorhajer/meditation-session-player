@@ -39,6 +39,10 @@ export class ProfileService {
     this.setThemeIndex();
   }
 
+  isCurrentProfile(name: string): boolean {
+    return this.profile.name === name;
+  }
+
   newProfile(name: string) {
     const oldProfile = new ProfileModel();
     Object.getOwnPropertyNames(this.profile).forEach(f => {
@@ -52,13 +56,15 @@ export class ProfileService {
   }
 
   setProfile(name: string, emit = true) {
-    const oldName = this.profile.name;
-    this.profile = this.profiles.profiles.find(p => p.name === name);
-    this.profile.selected = true;
-    this.profiles.profiles.find(p => p.name === oldName).selected = false;
-    this.setThemeIndex();
-    if (emit) {
-      this.changeProfile.emit();
+    if (!this.isCurrentProfile(name)) {
+      const oldName = this.profile.name;
+      this.profile = this.profiles.profiles.find(p => p.name === name);
+      this.profile.selected = true;
+      this.profiles.profiles.find(p => p.name === oldName).selected = false;
+      this.setThemeIndex();
+      if (emit) {
+        this.changeProfile.emit();
+      }
     }
   }
 
@@ -82,6 +88,18 @@ export class ProfileService {
 
   getThemes(): { title: string, className: string }[] {
     return THEME_LIST;
+  }
+
+  getProfileName(): string {
+    return this.profile.name;
+  }
+
+  getProfileLetter(profile: ProfileModel): string {
+    return profile.name.substring(0,1).toUpperCase();
+  }
+
+  isProfileToolbarEnabled(): boolean {
+    return this.profile.profileToolbarEnabled && this.profiles.profiles.length > 1;
   }
 
   setRingToneIndex(value = 0) {
@@ -140,6 +158,11 @@ export class ProfileService {
     }
     document.body.classList.value = '';
     document.body.classList.toggle(this.getSelectedThemeClass());
+    this.saveProfile();
+  }
+
+  setProfileToolbarEnabled(enabled = true) {
+    this.profile.profileToolbarEnabled = enabled;
     this.saveProfile();
   }
 

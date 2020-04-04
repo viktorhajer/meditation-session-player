@@ -23,6 +23,7 @@ export class ProfileModel {
     public repeat = 0,
     public speed = 0,
     public themeIndex = 2,
+    public profileToolbarEnabled = false,
     public malaEnabled = false,
     public malaBeads = 108,
     public hidden: string[] = [],

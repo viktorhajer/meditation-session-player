@@ -239,6 +239,10 @@ export class PlayerPage implements AfterViewInit {
     }
   }
 
+  setProfile(name: string) {
+    this.profileService.setProfile(name);
+  }
+
   get audioElement(): HTMLAudioElement {
     return this.audioElementRef.nativeElement as HTMLAudioElement;
   }
