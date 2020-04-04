@@ -104,8 +104,13 @@ export class ProfileService {
     this.saveProfile();
   }
 
-  setTimerInterval(interval = []) {
-    this.profile.timerInterval = interval;
+  setTimerRepeated(repeated = true) {
+    this.profile.timerRepeated = repeated;
+    this.saveProfile();
+  }
+
+  setTimerPeriods(value = []) {
+    this.profile.timerPeriods = value;
     this.saveProfile();
   }
 

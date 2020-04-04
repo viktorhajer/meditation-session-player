@@ -33,7 +33,7 @@ export class NotificationService {
       if (this.timerIndex !== 0) {
         this.ringNotification().then(() => this.vibrateNotification());
       }
-      const list = this.profileService.profile.timerInterval;
+      const list = this.profileService.profile.timerPeriods;
       if (this.timerIndex < list.length) {
         this.timerStarted = Date.now();
         this.timer = setTimeout(() => {
@@ -42,6 +42,9 @@ export class NotificationService {
         }, list[this.timerIndex] * 1000);
       } else {
         this.resetInterval();
+        if (this.profileService.profile.timerRepeated) {
+          this.startInterval();
+        }
       }
     }
   }
@@ -69,8 +72,8 @@ export class NotificationService {
     if (!this.timerStarted) {
       this.countdownText = '';
     }
-    const diff1 = this.profileService.profile.timerInterval.length - this.timerIndex;
-    const diff2 = this.profileService.profile.timerInterval[this.timerIndex] -
+    const diff1 = this.profileService.profile.timerPeriods.length - this.timerIndex;
+    const diff2 = this.profileService.profile.timerPeriods[this.timerIndex] -
       Math.floor((Date.now() - this.timerStarted) / 1000);
     this.countdownText = DateHelper.formatTime(diff2) + ` (${diff1})`;
   }
@@ -93,7 +96,7 @@ export class NotificationService {
   }
 
   private isTimerEnabled(): boolean {
-    return this.profileService.profile.timerEnabled && this.profileService.profile.timerInterval.length > 0;
+    return this.profileService.profile.timerEnabled && this.profileService.profile.timerPeriods.length > 0;
   }
 
   private getSelectedRingTone(): RingToneModel {

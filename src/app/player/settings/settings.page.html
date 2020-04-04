@@ -30,7 +30,7 @@
 
     <ion-list-header color="medium">Alarm</ion-list-header>
     <ion-item>
-      <ion-label>Alarm Type</ion-label>
+      <ion-label>Type</ion-label>
       <ion-select [(ngModel)]="notificationType" (ionChange)="changedNotificationType()" interface="popover">
         <ion-select-option [value]="0">Ringing</ion-select-option>
         <ion-select-option [value]="1">Vibration</ion-select-option>
@@ -46,22 +46,31 @@
       </ion-select>
     </ion-item>
     <ion-item>
-      <ion-label>End sign enabled</ion-label>
+      <ion-label>End Sign</ion-label>
       <ion-toggle [(ngModel)]="notificationEnabled" (ionChange)="changedNotificationEnabled()"></ion-toggle>
     </ion-item>
+
+    <ion-list-header color="medium">Timer</ion-list-header>
     <ion-item>
-      <ion-label>Timer enabled</ion-label>
+      <ion-label>Enabled</ion-label>
       <ion-toggle [(ngModel)]="timerEnabled" (ionChange)="changedTimerEnabled()"></ion-toggle>
     </ion-item>
     <ion-item>
-      <ion-label>Interval (secs)</ion-label>
-      <ion-input [disabled]="!timerEnabled" [(ngModel)]="timerInterval"
-                 (ionChange)="changedTimerInterval()"></ion-input>
+      <ion-label>Repeated</ion-label>
+      <ion-toggle [(ngModel)]="timerRepeated" (ionChange)="changedTimerRepeated()"></ion-toggle>
+    </ion-item>
+    <ion-item (click)="showTimerForm()">
+      <ion-label>Periods (secs)</ion-label>
+      <ion-button [disabled]="!timerEnabled">Change</ion-button>
+    </ion-item>
+    <ion-item (click)="showTimerForm()">
+      <ion-label></ion-label>
+      <p class="timer-periods">{{timerPeriods}}</p>
     </ion-item>
 
     <ion-list-header color="medium">Background Music</ion-list-header>
     <ion-item>
-      <ion-label>Music enabled</ion-label>
+      <ion-label>Enabled</ion-label>
       <ion-toggle [(ngModel)]="musicEnabled" (ionChange)="changedMusicEnabled()"></ion-toggle>
     </ion-item>
     <ion-item>
@@ -82,7 +91,7 @@
     </ion-item>
     <ion-item>
       <ion-label (click)="showHelp('Music restarts', 'music_restart')">
-        Music restarts
+        Restarted
         <ion-icon name="help" class="help-icon"></ion-icon>
       </ion-label>
       <ion-toggle [disabled]="!musicEnabled" [(ngModel)]="restartMusic"

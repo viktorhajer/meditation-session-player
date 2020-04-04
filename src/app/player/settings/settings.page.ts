@@ -18,7 +18,8 @@ export class SettingsPage {
   notificationType: number;
   ringToneIndex: number;
   timerEnabled: boolean;
-  timerInterval: string;
+  timerRepeated: boolean;
+  timerPeriods: string;
   musicEnabled: boolean;
   musicUrl: string;
   musicVolume: number;
@@ -66,11 +67,8 @@ export class SettingsPage {
     this.profileService.setTimerEnabled(this.timerEnabled);
   }
 
-  changedTimerInterval() {
-    this.notification.resetInterval();
-    const interval = this.timerInterval.split(',')
-      .map(parts => parts.trim()).filter(p => !isNaN(Number(p))).map(p => Number(p));
-    this.profileService.setTimerInterval(interval);
+  changedTimerRepeated() {
+    this.profileService.setTimerRepeated(this.timerRepeated);
   }
 
   changedMusicEnabled() {
@@ -141,6 +139,24 @@ export class SettingsPage {
     }).then(t => t.present());
   }
 
+  showTimerForm() {
+    this.alertController.create({
+      header: 'Set timer periods',
+      inputs: [{name: 'timerPeriods', type: 'textarea', placeholder: 'Periods', value: this.timerPeriods}],
+      buttons: [{text: 'Cancel', role: 'cancel', cssClass: 'secondary'},
+        {
+          text: 'Ok',
+          handler: (data) => {
+            this.notification.resetInterval();
+            const interval = data.timerPeriods.trim().split(',')
+              .map(parts => parts.trim()).filter(p => !isNaN(Number(p)) && Number(p) !== 0).map(p => Number(p));
+            this.timerPeriods = interval.join(',');
+            this.profileService.setTimerPeriods(interval);
+          }
+        }]
+    }).then(t => t.present());
+  }
+
   close() {
     this.modalCtrl.dismiss();
   }
@@ -150,7 +166,8 @@ export class SettingsPage {
     this.notificationType = this.profileService.profile.notificationType;
     this.ringToneIndex = this.profileService.profile.ringToneIndex;
     this.timerEnabled = this.profileService.profile.timerEnabled;
-    this.timerInterval = this.profileService.profile.timerInterval.join(',');
+    this.timerRepeated = this.profileService.profile.timerRepeated;
+    this.timerPeriods = this.profileService.profile.timerPeriods.join(',');
     this.musicEnabled = this.profileService.profile.musicEnabled;
     this.musicUrl = this.profileService.profile.musicUrl;
     this.musicVolume = this.profileService.profile.musicVolume;

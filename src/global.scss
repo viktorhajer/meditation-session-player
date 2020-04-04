@@ -229,7 +229,15 @@ ion-title {
     --ion-color-secondary-shade: #8101b8;
     --ion-color-secondary-tint: #9e1ad6;
 
+    --ion-color-light: #222428;
+    --ion-color-light-rgb: 34,36,40;
+    --ion-color-light-contrast: #ffffff;
+    --ion-color-light-contrast-rgb: 255,255,255;
+    --ion-color-light-shade: #1e2023;
+    --ion-color-light-tint: #383a3e;
+
     --ion-custome-img-filter: hue-rotate(322deg) grayscale(15%) brightness(1.2);
+    --ion-custome-anim-img-filter: invert(1);
   }
 
   .green {
