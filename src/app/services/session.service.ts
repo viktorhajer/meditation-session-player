@@ -2,27 +2,29 @@ import {Injectable} from '@angular/core';
 import {Session} from '../models/session.model';
 import {ProfileService} from './profile.service';
 import {DateHelper} from './date.helper';
+import {File as NativeFile} from '@ionic-native/file/ngx';
+
+const mocked = true;
+const durationOff = true;
 
 @Injectable({providedIn: 'root'})
 export class SessionService {
 
   private orderAsc = true;
 
-  constructor(private profileService: ProfileService) {
+  constructor(private profileService: ProfileService,
+              private file: NativeFile) {
   }
 
   getSessions(): Promise<Session[]> {
-    const list = [
-      new Session({name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: '/assets/music_example.mp3'}),
-      new Session({name: 'OM AKHAND - Healing Power of OM.mp3', url: '/assets/example.mp3'}),
-      new Session({name: 'Meditation To Improve.mp3', url: '/assets/ringTones/china-bell-ring.mp3'}),
-      new Session({name: 'OM AKHAND', url: '/assets/ringTones/cell-phone-vibrate.mp3'})
-    ];
+    const list = mocked ? [
+      new Session({name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: '/assets/example.mp3'}),
+      new Session({name: 'Meditation To Improve.mp3', url: '/assets/ringTones/china-bell-ring.mp3'})
+    ] : [];
     this.setFavorites(list);
     this.setHidden(list);
     list.sort((s1, s2) => this.sortSession(s1, s2));
-    this.checkMusicDuration(list);
-    return Promise.resolve(list);
+    return this.checkMusicDuration(list).then(() => list);
   }
 
   isAscendingOrder(): boolean {
@@ -61,13 +63,16 @@ export class SessionService {
     });
   }
 
-  private checkMusicDuration(list: Session[]) {
-    list.forEach(s => {
-      const audioTmp = document.createElement('audio') as HTMLAudioElement;
-      audioTmp.src = s.url;
-      audioTmp.addEventListener('loadedmetadata', () => {
-        s.duration = DateHelper.formatTime(Math.round(audioTmp.duration));
+  private checkMusicDuration(list: Session[]): Promise<any> {
+    return durationOff ? Promise.resolve() : Promise.all(list.map(s => {
+      return new Promise((resolve) => {
+        const audioTmp = document.createElement('audio') as HTMLAudioElement;
+        audioTmp.src = s.url;
+        audioTmp.addEventListener('loadedmetadata', () => {
+          s.duration = DateHelper.formatTime(Math.round(audioTmp.duration));
+          resolve();
+        });
       });
-    });
+    }));
   }
 }

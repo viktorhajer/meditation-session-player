@@ -86,6 +86,7 @@ export class MalaPage {
       this.notificationService.ring(true);
     } else {
       this.ballAnim = 'b1';
+      this.notificationService.vibrateNotification(true, [100]);
     }
   }
 

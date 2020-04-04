@@ -17,10 +17,12 @@ export class BackgroundMusicService {
   }
 
   play() {
-    this.refreshMusic();
-    this.audioElement.autoplay = true;
-    if (this.profileService.profile.musicEnabled && this.audioElement.paused) {
-      this.audioElement.play();
+    if (this.profileService.profile.musicEnabled && !!this.profileService.profile.musicUrl) {
+      this.refreshMusic();
+      this.audioElement.autoplay = true;
+      if (this.profileService.profile.musicEnabled && this.audioElement.paused) {
+        this.audioElement.play();
+      }
     }
   }
 
@@ -39,6 +41,7 @@ export class BackgroundMusicService {
   refreshMusic() {
     if (!(this.audioElement.src === this.profileService.profile.musicUrl)) {
       this.audioElement.src = this.profileService.profile.musicUrl;
+      this.audioElement.pause();
     }
     this.audioElement.volume = this.profileService.profile.musicVolume / 100;
     if (!this.profileService.profile.musicEnabled) {

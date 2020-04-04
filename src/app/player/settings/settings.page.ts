@@ -58,7 +58,7 @@ export class SettingsPage {
 
   changedRingToneIndex() {
     this.profileService.setRingToneIndex(this.ringToneIndex);
-    this.notification.playNotification(true);
+    this.notification.ringNotification(true);
   }
 
   changedTimerEnabled() {
@@ -75,7 +75,12 @@ export class SettingsPage {
 
   changedMusicEnabled() {
     this.profileService.setMusicEnabled(this.musicEnabled);
-    this.bgMusic.refreshMusic();
+    if (!this.musicUrl && !!this.sessions.length) {
+      this.musicUrl = this.sessions[0].url;
+      this.changedMusicUrl();
+    } else {
+      this.bgMusic.refreshMusic();
+    }
   }
 
   changedMusicUrl() {

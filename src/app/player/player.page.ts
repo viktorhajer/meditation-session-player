@@ -45,7 +45,7 @@ export class PlayerPage implements AfterViewInit {
   currentSession: Session;
   displayFooter = 'inactive';
   organizeMod = false;
-  private loadingModal: Promise<HTMLIonLoadingElement>;
+  private loadingModalPromise: Promise<HTMLIonLoadingElement>;
   private seekTimeout: any;
 
   constructor(private loadingCtrl: LoadingController,
@@ -54,7 +54,7 @@ export class PlayerPage implements AfterViewInit {
               public sessionService: SessionService,
               public notification: NotificationService,
               public profileService: ProfileService) {
-    this.refreshDocuments();
+    this.refreshDocuments(true);
     this.profileService.changeProfile.subscribe(() => this.refreshDocuments());
   }
 
@@ -62,6 +62,9 @@ export class PlayerPage implements AfterViewInit {
     this.notification.setAudioElement(this.ringingElementRef.nativeElement as HTMLAudioElement);
     this.bgMusic.setAudioElement(this.musicElementRef.nativeElement as HTMLAudioElement);
 
+    this.audioElement.addEventListener('loadedmetadata', () => {
+      this.dismissLoading();
+    });
     this.audioElement.addEventListener('timeupdate', () => {
       const range = document.querySelector('ion-range');
       if (!!range && !range.classList.contains('range-pressed')) {
@@ -100,6 +103,7 @@ export class PlayerPage implements AfterViewInit {
       if (!!this.currentSession && this.currentSession.url === session.url) {
         this.resetState();
       } else {
+        this.presentLoading();
         this.notification.resetInterval();
         this.currentSession = session;
         this.audioElement.src = this.currentSession.url;
@@ -239,8 +243,10 @@ export class PlayerPage implements AfterViewInit {
     return this.audioElementRef.nativeElement as HTMLAudioElement;
   }
 
-  private refreshDocuments() {
-    this.presentLoading();
+  private refreshDocuments(force = false) {
+    if (force) {
+      this.presentLoading();
+    }
     this.sessionService.getSessions()
       .then(sessions => {
         this.sessions = sessions;
@@ -270,20 +276,23 @@ export class PlayerPage implements AfterViewInit {
   }
 
   private presentLoading() {
-    this.getLoading().then(l => l.present());
+    if (!this.loadingModalPromise) {
+      this.loadingModalPromise = this.loadingCtrl.create({
+        message: 'Please Wait...',
+        mode: 'ios'
+      }).then(modal => {
+        setTimeout(() => this.dismissLoading(), 4000);
+        modal.present();
+        return modal;
+      });
+    }
+    return this.loadingModalPromise;
   }
 
   private dismissLoading() {
-    this.getLoading().then(l => l.dismiss());
-  }
-
-  private getLoading(): Promise<HTMLIonLoadingElement> {
-    if (!this.loadingModal) {
-      this.loadingModal = this.loadingCtrl.create({
-        message: 'Please Wait...',
-        mode: 'ios'
-      });
+    if (this.loadingModalPromise) {
+      this.loadingModalPromise.then(modal => modal.dismiss());
+      this.loadingModalPromise = null;
     }
-    return this.loadingModal;
   }
 }

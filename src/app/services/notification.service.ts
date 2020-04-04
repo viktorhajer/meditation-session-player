@@ -24,14 +24,14 @@ export class NotificationService {
 
   ring(enabled = false): Promise<void> {
     const notificationEnabled = enabled || this.profileService.profile.notificationEnabled;
-    return this.playNotification(notificationEnabled)
-      .then(() => this.vibrateDevice(notificationEnabled));
+    return this.ringNotification(notificationEnabled)
+      .then(() => this.vibrateNotification(notificationEnabled));
   }
 
   startInterval() {
     if (this.isTimerEnabled()) {
       if (this.timerIndex !== 0) {
-        this.playNotification().then(() => this.vibrateDevice());
+        this.ringNotification().then(() => this.vibrateNotification());
       }
       const list = this.profileService.profile.timerInterval;
       if (this.timerIndex < list.length) {
@@ -75,7 +75,7 @@ export class NotificationService {
     this.countdownText = DateHelper.formatTime(diff2) + ` (${diff1})`;
   }
 
-  playNotification(enabled = true, src?: string): Promise<void> {
+  ringNotification(enabled = true, src?: string): Promise<void> {
     if (!!this.audioElement && enabled && this.isRingingTypeEnabled()) {
       this.audioElement.src = !!src ? src : this.getSelectedRingTone().url;
       this.audioElement.play();
@@ -86,18 +86,18 @@ export class NotificationService {
     return Promise.resolve();
   }
 
+  vibrateNotification(enabled = true, sequence = [500, 100, 500]) {
+    if (enabled && this.isVibrationTypeEnabled()) {
+      this.vibration.vibrate(sequence);
+    }
+  }
+
   private isTimerEnabled(): boolean {
     return this.profileService.profile.timerEnabled && this.profileService.profile.timerInterval.length > 0;
   }
 
   private getSelectedRingTone(): RingToneModel {
     return RING_TONE_LIST[this.profileService.profile.ringToneIndex];
-  }
-
-  private vibrateDevice(enabled = true) {
-    if (enabled && this.isVibrationTypeEnabled()) {
-      this.vibration.vibrate([1000, 200, 1000]);
-    }
   }
 
   private isRingingTypeEnabled(): boolean {

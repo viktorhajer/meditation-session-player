@@ -8,6 +8,7 @@ import {Vibration} from '@ionic-native/vibration/ngx';
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {File} from '@ionic-native/file/ngx';
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     StatusBar,
     SplashScreen,
     Vibration,
+    File,
     {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
   ],
   bootstrap: [AppComponent]

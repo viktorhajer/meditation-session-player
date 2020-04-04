@@ -65,8 +65,8 @@
       <ion-toggle [(ngModel)]="musicEnabled" (ionChange)="changedMusicEnabled()"></ion-toggle>
     </ion-item>
     <ion-item>
-      <ion-label class="music-label">Music</ion-label>
-      <ion-select class="music-select" [disabled]="!musicEnabled" [(ngModel)]="musicUrl"
+      <ion-label>Music</ion-label>
+      <ion-select [disabled]="!musicEnabled" [(ngModel)]="musicUrl"
                   (ionChange)="changedMusicUrl()"
                   interface="popover">
         <ion-select-option *ngFor="let session of sessions" [value]="session.url">
