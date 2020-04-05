@@ -3,7 +3,7 @@
 <audio #musicElement loop crossorigin="anonymous"></audio>
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title color="light" *ngIf="!profileService.isProfileToolbarEnabled()">Meditation Session Player1</ion-title>
+    <ion-title color="light" *ngIf="!profileService.isProfileToolbarEnabled()">Meditation Session Player</ion-title>
     <ion-title color="light"
                *ngIf="profileService.isProfileToolbarEnabled()">{{profileService.getProfileName()}}</ion-title>
     <ion-buttons slot="end">
@@ -81,6 +81,9 @@
           <ion-icon name="play"></ion-icon>
         </p>
       </ion-col>
+    </ion-item>
+    <ion-item *ngIf="getSessions().length === 0">
+      <ion-col class="ion-justify-content-center">List is empty</ion-col>
     </ion-item>
   </ion-list>
 </ion-content>

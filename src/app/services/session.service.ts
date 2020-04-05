@@ -5,7 +5,7 @@ import {DateHelper} from './date.helper';
 import {File as NativeFile} from '@ionic-native/file/ngx';
 import {SessionStateModel} from '../models/session-state.model';
 
-const DURATION_CHECKING_ENABLED = true;
+const DURATION_CHECKING_ENABLED = false;
 
 @Injectable({providedIn: 'root'})
 export class SessionService {
@@ -17,24 +17,24 @@ export class SessionService {
 
   constructor(private profileService: ProfileService,
               private file: NativeFile) {
-    // this.hasCordova = !!(window as any).cordova;
+    this.hasCordova = !!(window as any).cordova;
   }
 
   getSessions(): Promise<Session[]> {
-    return this.cache.length ? Promise.resolve(this.cache) :
+    return (this.cache.length ? Promise.resolve(this.cache) :
       (this.hasCordova ? this.readFolder() :
         Promise.resolve([
           new Session({name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: '/assets/example.mp3', lyrics: true}),
           new Session({name: 'Meditation To Improve.mp3', url: '/assets/ringTones/china-bell-ring.mp3'})
-        ]))
-        .then(list => this.cache = list)
-        .then(() => {
-          this.resetFlags(this.cache);
-          this.setFavorites(this.cache);
-          this.setHidden(this.cache);
-          this.cache.sort((s1, s2) => this.sortSession(s1, s2));
-          return this.checkMusicDuration(this.cache).then(() => this.cache);
-        });
+        ])))
+      .then(list => this.cache = list)
+      .then(() => {
+        this.resetFlags(this.cache);
+        this.setFavorites(this.cache);
+        this.setHidden(this.cache);
+        this.cache.sort((s1, s2) => this.sortSession(s1, s2));
+        return this.checkMusicDuration(this.cache).then(() => this.cache);
+      });
   }
 
   isAscendingOrder(): boolean {
@@ -62,8 +62,8 @@ export class SessionService {
 
   readLyrics(session: Session): Promise<string> {
     if (session.lyrics && this.hasCordova) {
-      return this.file.readAsText(this.file.externalRootDirectory + 'Download/medi', session.name);
-    } else if (!this.hasCordova){
+      return this.file.readAsText(this.file.externalRootDirectory + 'Download/medi', session.name.replace('.mp3', '.srt'));
+    } else if (!this.hasCordova) {
       return Promise.resolve('Test');
     }
     return Promise.resolve('');
@@ -120,12 +120,10 @@ export class SessionService {
       .then(entries => {
         const sessions = entries.filter(e => e.isFile && e.fullPath.endsWith('.mp3'))
           .map(e => {
-            const newUrl = (window as any).Ionic.WebView.convertFileSrc(e.nativeURL);
-            return new Session({name: e.name, url: newUrl});
+            return new Session({name: e.name, url: e.nativeURL});
           });
         entries.filter(e => e.isFile && e.fullPath.endsWith('.srt')).forEach(e => {
-          const newUrl = (window as any).Ionic.WebView.convertFileSrc(e.nativeURL);
-          const session = sessions.find(s => this.compareFileNames(s.url, newUrl));
+          const session = sessions.find(s => this.compareFileNames(s.url, e.nativeURL));
           if (!!session) {
             session.lyrics = true;
           }

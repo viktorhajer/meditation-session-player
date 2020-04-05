@@ -114,7 +114,11 @@ export class PlayerPage implements AfterViewInit {
         this.presentLoading();
         this.notification.resetInterval();
         this.currentSession = session;
-        this.audioElement.src = this.currentSession.url;
+        if (!!(window as any).cordova) {
+          this.audioElement.src = (window as any).Ionic.WebView.convertFileSrc(this.currentSession.url);
+        } else {
+          this.audioElement.src = this.currentSession.url;
+        }
         this.audioElement.play().then(() => {
           this.displayFooter = 'active';
           this.audioElement.currentTime = this.sessionService.getPosition(session.name);
@@ -292,7 +296,7 @@ export class PlayerPage implements AfterViewInit {
         message: 'Please Wait...',
         mode: 'ios'
       }).then(modal => {
-        setTimeout(() => this.dismissLoading(), 4000);
+        setTimeout(() => this.dismissLoading(), 8000);
         modal.present();
         return modal;
       });

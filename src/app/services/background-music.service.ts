@@ -12,7 +12,11 @@ export class BackgroundMusicService {
   setAudioElement(audioElement: HTMLAudioElement) {
     this.audioElement = audioElement;
     this.audioElement.volume = this.profileService.profile.musicVolume / 100;
-    this.audioElement.src = this.profileService.profile.musicUrl;
+    if (!!(window as any).cordova) {
+      this.audioElement.src = (window as any).Ionic.WebView.convertFileSrc(this.profileService.profile.musicUrl);
+    } else {
+      this.audioElement.src = this.profileService.profile.musicUrl;
+    }
     this.audioElement.autoplay = false;
   }
 
@@ -40,7 +44,11 @@ export class BackgroundMusicService {
 
   refreshMusic() {
     if (!(this.audioElement.src === this.profileService.profile.musicUrl)) {
-      this.audioElement.src = this.profileService.profile.musicUrl;
+      if (!!(window as any).cordova) {
+        this.audioElement.src = (window as any).Ionic.WebView.convertFileSrc(this.profileService.profile.musicUrl);
+      } else {
+        this.audioElement.src = this.profileService.profile.musicUrl;
+      }
       this.audioElement.pause();
     }
     this.audioElement.volume = this.profileService.profile.musicVolume / 100;

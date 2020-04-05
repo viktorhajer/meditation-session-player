@@ -24,14 +24,14 @@ export class NotificationService {
 
   ring(enabled = false): Promise<void> {
     const notificationEnabled = enabled || this.profileService.profile.notificationEnabled;
-    return this.ringNotification(notificationEnabled)
-      .then(() => this.vibrateNotification(notificationEnabled));
+    this.vibrateNotification(notificationEnabled);
+    return this.ringNotification(notificationEnabled);
   }
 
   startInterval() {
     if (this.isTimerEnabled()) {
       if (this.timerIndex !== 0) {
-        this.ringNotification().then(() => this.vibrateNotification());
+        this.ring(true);
       }
       const list = this.profileService.profile.timerPeriods;
       if (this.timerIndex < list.length) {
