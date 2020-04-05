@@ -257,9 +257,17 @@ export class PlayerPage implements AfterViewInit {
   openLyrics() {
     this.sessionService.readLyrics(this.currentSession).then(content => {
       this.modalController.create({
-        component: LyricsPage, componentProps: { content }
+        component: LyricsPage, componentProps: {content, title: this.currentSession.name}
       }).then(modal => modal.present());
     }).catch(e => console.error(e));
+  }
+
+  refreshPage(event) {
+    this.sessionService.getSessions()
+      .then(sessions => {
+        this.sessions = sessions;
+        event.target.complete();
+      });
   }
 
   get audioElement(): HTMLAudioElement {

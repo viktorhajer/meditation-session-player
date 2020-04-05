@@ -8,6 +8,7 @@ import {ModalController} from '@ionic/angular';
 })
 export class LyricsPage {
 
+  @Input() title: string;
   @Input() content: string;
 
   constructor(private modalCtrl: ModalController) {

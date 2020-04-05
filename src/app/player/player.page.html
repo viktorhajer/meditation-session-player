@@ -19,6 +19,9 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refreshPage($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <div id="app-section" [class.small]="!!currentSession" (click)="openMala()">
     <img src="/assets/icon/meditation-icon.jpg" [class.small]="!!currentSession">
     <h2 id="app-title"
