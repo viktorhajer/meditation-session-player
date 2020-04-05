@@ -30,6 +30,7 @@ export class SettingsPage {
   malaEnabled: boolean;
   malaBeads: number;
   sessions: Session[] = [];
+  initialized = false;
 
   constructor(private modalCtrl: ModalController,
               private notification: NotificationService,
@@ -40,6 +41,7 @@ export class SettingsPage {
     this.fillSettingsForm();
     this.profileService.changeProfile.subscribe(() => this.fillSettingsForm());
     this.sessionService.getSessions().then(sessions => this.sessions = sessions);
+    setTimeout(() => this.initialized = true, 1000);
   }
 
   changedMalaEnabled() {
@@ -59,8 +61,10 @@ export class SettingsPage {
   }
 
   changedRingToneIndex() {
-    this.profileService.setRingToneIndex(this.ringToneIndex);
-    this.notification.ringNotification(true);
+    if (this.initialized) {
+      this.profileService.setRingToneIndex(this.ringToneIndex);
+      this.notification.ringNotification(true);
+    }
   }
 
   changedTimerEnabled() {

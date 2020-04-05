@@ -1,6 +1,11 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title color="light">{{title}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="toggleSize()">
+        <ion-icon color="light" name="search-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title color="light">{{lyricsService.title}}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="close()">
         <ion-icon name="close-outline" color="light"></ion-icon>
@@ -9,5 +14,5 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <pre [innerHTML]="content"></pre>
+  <pre [class.big]="bigSize" [innerHTML]="lyricsService.content"></pre>
 </ion-content>

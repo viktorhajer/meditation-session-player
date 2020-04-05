@@ -10,6 +10,7 @@ import {Session} from '../models/session.model';
 import {DateHelper} from '../services/date.helper';
 import {MalaPage} from './mala/mala.page';
 import {LyricsPage} from './lyrics/lyrics.page';
+import {LyricsService} from '../services/lyrics.service';
 
 @Component({
   selector: 'app-player',
@@ -46,13 +47,13 @@ export class PlayerPage implements AfterViewInit {
   currentSession: Session;
   displayFooter = 'inactive';
   organizeMod = false;
-  started = false;
   private loadingModalPromise: Promise<HTMLIonLoadingElement>;
   private seekTimeout: any;
 
   constructor(private loadingCtrl: LoadingController,
               private modalController: ModalController,
               private bgMusic: BackgroundMusicService,
+              private lyricsService: LyricsService,
               public sessionService: SessionService,
               public notification: NotificationService,
               public profileService: ProfileService) {
@@ -71,18 +72,16 @@ export class PlayerPage implements AfterViewInit {
       const range = document.querySelector('ion-range');
       if (!!range && !range.classList.contains('range-pressed')) {
         const diff = Math.abs((range.value as any) - Math.floor(this.audioElement.currentTime));
-        if (diff > 2 && this.started) {
+        if (diff > 2) {
           this.audioElement.currentTime = range.value as any;
         } else {
           range.value = this.audioElement.currentTime;
         }
       }
-      this.started = false;
       this.notification.refreshCountdownText();
     });
 
     this.audioElement.addEventListener('ended', () => {
-      this.sessionService.savePosition(this.currentSession.name, 0);
       this.notification.ring().then(() => {
         if (this.isLastPlaying() || !this.profileService.isRepeatEnabled()) {
           this.resetState();
@@ -98,14 +97,10 @@ export class PlayerPage implements AfterViewInit {
     return this.organizeMod ? this.sessions : this.sessions.filter(s => !s.hidden);
   }
 
-  openSession(session: Session, savePosition = false) {
+  openSession(session: Session) {
     if (this.organizeMod) {
       this.hideSession(session);
     } else {
-      if (this.currentSession) {
-        this.sessionService.savePosition(this.currentSession.name, savePosition ? this.audioElement.currentTime : 0);
-      }
-      this.started = true;
       this.audioElement.pause();
       this.audioElement.currentTime = 0;
       if (!!this.currentSession && this.currentSession.url === session.url) {
@@ -121,7 +116,11 @@ export class PlayerPage implements AfterViewInit {
         this.audioElement.play().then(() => {
           this.currentSession = session;
           this.displayFooter = 'active';
-          this.audioElement.currentTime = this.sessionService.getPosition(session.name);
+          if (!!this.lyricsService.dialog && session.lyrics) {
+            this.openLyrics();
+          } else if (!!this.lyricsService.dialog && !session.lyrics) {
+            this.lyricsService.closeDialog();
+          }
         });
         const range = document.querySelector('ion-range');
         if (!!range) {
@@ -262,9 +261,14 @@ export class PlayerPage implements AfterViewInit {
 
   openLyrics() {
     this.sessionService.readLyrics(this.currentSession).then(content => {
-      this.modalController.create({
-        component: LyricsPage, componentProps: {content, title: this.currentSession.name}
-      }).then(modal => modal.present());
+      this.lyricsService.title = this.currentSession.name;
+      this.lyricsService.content = content;
+      if (!this.lyricsService.dialog) {
+        this.modalController.create({component: LyricsPage}).then(modal => {
+          modal.present();
+          this.lyricsService.dialog = modal;
+        });
+      }
     }).catch(e => console.error(e));
   }
 
@@ -298,6 +302,7 @@ export class PlayerPage implements AfterViewInit {
   private resetState() {
     this.audioElement.pause();
     this.audioElement.currentTime = 0;
+    this.lyricsService.closeDialog();
     this.currentSession = null;
     this.displayFooter = 'inactive';
     this.notification.resetInterval();

@@ -1,5 +1,6 @@
-import {Component, Input} from '@angular/core';
+import {Component} from '@angular/core';
 import {ModalController} from '@ionic/angular';
+import {LyricsService} from '../../services/lyrics.service';
 
 @Component({
   selector: 'app-lyrics-page',
@@ -8,13 +9,18 @@ import {ModalController} from '@ionic/angular';
 })
 export class LyricsPage {
 
-  @Input() title: string;
-  @Input() content: string;
+  bigSize = false;
 
-  constructor(private modalCtrl: ModalController) {
+  constructor(private modalCtrl: ModalController,
+              public lyricsService: LyricsService) {
+  }
+
+  toggleSize() {
+    this.bigSize = !this.bigSize;
   }
 
   close() {
+    this.lyricsService.dialog = null;
     this.modalCtrl.dismiss();
   }
 }

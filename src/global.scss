@@ -34,6 +34,28 @@ ion-title {
   font-size: 0.9rem;
 }
 
+pre {
+  h1, h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: bold;
+    line-height: 1.5rem;
+  }
+  h2 {
+    font-size: 1rem;
+  }
+  &.big {
+    h1 {
+      font-size: 1.6rem;
+      line-height: 1.8rem;
+    }
+    h2 {
+      font-size: 1.4rem;
+      line-height: 1.8rem;
+    }
+  }
+}
+
 :root {
   --ion-color-primary: #d0297b;
   --ion-color-primary-rgb: 208, 41, 123;

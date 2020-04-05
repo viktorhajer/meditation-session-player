@@ -66,11 +66,11 @@
         <ion-icon name="eye-outline" *ngIf="!session.hidden"></ion-icon>
         <ion-icon name="eye-off-outline" *ngIf="session.hidden"></ion-icon>
       </ion-col>
-      <ion-col size="8" class="ion-justify-content-start" (click)="openSession(session, true)">
+      <ion-col size="8" class="ion-justify-content-start" (click)="openSession(session)">
         <p class="file-name">{{ session.name }}</p>
       </ion-col>
       <ion-col *ngIf="currentSession?.url === session.url && !organizeMod" class="ion-justify-content-end"
-               (click)="openSession(session, true)">
+               (click)="openSession(session)">
         <p class="selected-label">
           <label>SELECTED <br> {{getCurrentTime()}}</label>
           <img src="/assets/anim.gif" *ngIf="!audioElement.paused">
@@ -78,7 +78,7 @@
         </p>
       </ion-col>
       <ion-col *ngIf="currentSession?.url !== session.url && !organizeMod" class="ion-justify-content-end"
-               (click)="openSession(session, true)">
+               (click)="openSession(session)">
         <p class="selected-label">
           {{ session.duration }}
           <ion-icon name="play"></ion-icon>
