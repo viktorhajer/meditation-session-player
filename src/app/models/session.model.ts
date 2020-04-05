@@ -4,6 +4,7 @@ export class RowSession {
   duration?: string;
   liked?: boolean;
   hidden?: boolean;
+  lyrics?: boolean;
 }
 
 export class Session {
@@ -40,6 +41,14 @@ export class Session {
 
   set hidden(flag: boolean) {
     this.row.hidden = flag;
+  }
+
+  get lyrics(): boolean {
+    return this.row.lyrics;
+  }
+
+  set lyrics(flag: boolean) {
+    this.row.lyrics = flag;
   }
 
   getTitle(): string {

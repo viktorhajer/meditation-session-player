@@ -1,8 +1,10 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title color="light" (click)="reset()">
-      <ion-icon name="refresh-circle-outline" color="light"></ion-icon>
-    </ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="reset()">
+        <ion-icon name="refresh-circle-outline" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="close()">
         <ion-icon name="close-outline" color="light"></ion-icon>

@@ -247,13 +247,15 @@ export class PlayerPage implements AfterViewInit {
   }
 
   isLyricsAvailable(): boolean {
-    return !!this.currentSession;
+    return !!this.currentSession && !!this.currentSession.lyrics;
   }
 
   openLyrics() {
-    this.modalController.create({
-      component: LyricsPage
-    }).then(modal => modal.present());
+    this.sessionService.readLyrics(this.currentSession).then(content => {
+      this.modalController.create({
+        component: LyricsPage, componentProps: { content }
+      }).then(modal => modal.present());
+    }).catch(e => console.error(e));
   }
 
   get audioElement(): HTMLAudioElement {

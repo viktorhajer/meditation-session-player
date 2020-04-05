@@ -1,6 +1,5 @@
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ModalController} from '@ionic/angular';
-import {SessionService} from '../../services/session.service';
 
 @Component({
   selector: 'app-lyrics-page',
@@ -9,8 +8,9 @@ import {SessionService} from '../../services/session.service';
 })
 export class LyricsPage {
 
-  constructor(private modalCtrl: ModalController,
-              private sessionService: SessionService) {
+  @Input() content: string;
+
+  constructor(private modalCtrl: ModalController) {
   }
 
   close() {

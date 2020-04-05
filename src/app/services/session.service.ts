@@ -5,7 +5,7 @@ import {DateHelper} from './date.helper';
 import {File as NativeFile} from '@ionic-native/file/ngx';
 import {SessionStateModel} from '../models/session-state.model';
 
-const durationOff = true;
+const DURATION_CHECKING_ENABLED = true;
 
 @Injectable({providedIn: 'root'})
 export class SessionService {
@@ -13,16 +13,18 @@ export class SessionService {
   private orderAsc = true;
   private cache: Session[] = [];
   private sessionState: SessionStateModel[] = [];
+  private hasCordova = false;
 
   constructor(private profileService: ProfileService,
               private file: NativeFile) {
+    // this.hasCordova = !!(window as any).cordova;
   }
 
   getSessions(): Promise<Session[]> {
     return this.cache.length ? Promise.resolve(this.cache) :
-      ((window as any).cordova ? this.readFolder() :
+      (this.hasCordova ? this.readFolder() :
         Promise.resolve([
-          new Session({name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: '/assets/example.mp3'}),
+          new Session({name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: '/assets/example.mp3', lyrics: true}),
           new Session({name: 'Meditation To Improve.mp3', url: '/assets/ringTones/china-bell-ring.mp3'})
         ]))
         .then(list => this.cache = list)
@@ -56,6 +58,15 @@ export class SessionService {
   getPosition(name: string): number {
     const state = this.sessionState.find(s => s.name === name);
     return !!state ? state.position : 0;
+  }
+
+  readLyrics(session: Session): Promise<string> {
+    if (session.lyrics && this.hasCordova) {
+      return this.file.readAsText(this.file.externalRootDirectory + 'Download/medi', session.name);
+    } else if (!this.hasCordova){
+      return Promise.resolve('Test');
+    }
+    return Promise.resolve('');
   }
 
   private sortSession(s1: Session, s2: Session): number {
@@ -92,7 +103,7 @@ export class SessionService {
   }
 
   private checkMusicDuration(list: Session[]): Promise<any> {
-    return durationOff ? Promise.resolve() : Promise.all(list.map(s => {
+    return !DURATION_CHECKING_ENABLED ? Promise.resolve() : Promise.all(list.map(s => {
       return new Promise((resolve) => {
         const audioTmp = document.createElement('audio') as HTMLAudioElement;
         audioTmp.src = s.url;
@@ -106,9 +117,24 @@ export class SessionService {
 
   private readFolder(): Promise<Session[]> {
     return this.file.listDir(this.file.externalRootDirectory, 'Download/medi')
-      .then(entries => entries.map(e => {
-        const newUrl = (window as any).Ionic.WebView.convertFileSrc(e.nativeURL);
-        return new Session({name: e.name, url: newUrl});
-      }));
+      .then(entries => {
+        const sessions = entries.filter(e => e.isFile && e.fullPath.endsWith('.mp3'))
+          .map(e => {
+            const newUrl = (window as any).Ionic.WebView.convertFileSrc(e.nativeURL);
+            return new Session({name: e.name, url: newUrl});
+          });
+        entries.filter(e => e.isFile && e.fullPath.endsWith('.srt')).forEach(e => {
+          const newUrl = (window as any).Ionic.WebView.convertFileSrc(e.nativeURL);
+          const session = sessions.find(s => this.compareFileNames(s.url, newUrl));
+          if (!!session) {
+            session.lyrics = true;
+          }
+        });
+        return sessions;
+      });
+  }
+
+  private compareFileNames(path1: string, path2: string): boolean {
+    return path1.substr(0, path1.length - 3) === path2.substr(0, path2.length - 3);
   }
 }
