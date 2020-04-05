@@ -113,13 +113,13 @@ export class PlayerPage implements AfterViewInit {
       } else {
         this.presentLoading();
         this.notification.resetInterval();
-        this.currentSession = session;
         if (!!(window as any).cordova) {
-          this.audioElement.src = (window as any).Ionic.WebView.convertFileSrc(this.currentSession.url);
+          this.audioElement.src = (window as any).Ionic.WebView.convertFileSrc(session.url);
         } else {
-          this.audioElement.src = this.currentSession.url;
+          this.audioElement.src = session.url;
         }
         this.audioElement.play().then(() => {
+          this.currentSession = session;
           this.displayFooter = 'active';
           this.audioElement.currentTime = this.sessionService.getPosition(session.name);
         });
@@ -182,19 +182,25 @@ export class PlayerPage implements AfterViewInit {
   }
 
   next() {
-    let index = this.sessions.indexOf(this.currentSession) + 1;
-    if (index >= this.sessions.length) {
+    let index = this.getSessions().indexOf(this.currentSession) + 1;
+    if (index === 0) {
+      return;
+    }
+    if (index >= this.getSessions().length) {
       index = 0;
     }
-    this.openSession(this.sessions[index]);
+    this.openSession(this.getSessions()[index]);
   }
 
   previous() {
-    let index = this.sessions.indexOf(this.currentSession) - 1;
-    if (index < 0) {
-      index = this.sessions.length - 1;
+    let index = this.getSessions().indexOf(this.currentSession) - 1;
+    if (index === -2) {
+      return;
     }
-    this.openSession(this.sessions[index]);
+    if (index < 0) {
+      index = this.getSessions().length - 1;
+    }
+    this.openSession(this.getSessions()[index]);
   }
 
   onSeekChange(event) {
@@ -286,7 +292,7 @@ export class PlayerPage implements AfterViewInit {
   }
 
   private isLastPlaying(): boolean {
-    return this.sessions.indexOf(this.currentSession) === (this.sessions.length - 1);
+    return this.getSessions().indexOf(this.currentSession) === (this.getSessions().length - 1);
   }
 
   private resetState() {

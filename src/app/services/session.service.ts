@@ -25,7 +25,8 @@ export class SessionService {
       (this.hasCordova ? this.readFolder() :
         Promise.resolve([
           new Session({name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: '/assets/example.mp3', lyrics: true}),
-          new Session({name: 'Meditation To Improve.mp3', url: '/assets/ringTones/china-bell-ring.mp3'})
+          new Session({name: '1Meditation To Improve.mp3', url: '/assets/ringTones/china-bell-ring.mp3'}),
+          new Session({name: '2Meditation To Improve.mp3', url: '/assets/ringTones/cell-phone-beep.mp3'})
         ])))
       .then(list => this.cache = list)
       .then(() => {
