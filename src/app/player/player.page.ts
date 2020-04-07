@@ -292,7 +292,8 @@ export class PlayerPage implements AfterViewInit {
       .then(sessions => {
         this.sessions = sessions;
         this.dismissLoading();
-      });
+      })
+      .catch(e => console.error('sessions error', e));
   }
 
   private isLastPlaying(): boolean {

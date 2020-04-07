@@ -8,7 +8,7 @@ export class LyricsService {
 
   closeDialog() {
     if (!!this.dialog) {
-      this.dialog.dismiss();
+      this.dialog.dismiss().then(() => this.dialog = null);
     }
   }
 }
