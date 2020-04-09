@@ -1,19 +1,21 @@
 import {Injectable} from '@angular/core';
 import {ProfileService} from './profile.service';
+import {PlatformService} from './platform.service';
 
 @Injectable({providedIn: 'root'})
 export class BackgroundMusicService {
 
   private audioElement: HTMLAudioElement;
 
-  constructor(private profileService: ProfileService) {
+  constructor(private profileService: ProfileService,
+              private platformService: PlatformService) {
   }
 
   setAudioElement(audioElement: HTMLAudioElement) {
     this.audioElement = audioElement;
     this.audioElement.volume = this.profileService.profile.musicVolume / 100;
-    if (!!(window as any).cordova) {
-      this.audioElement.src = (window as any).Ionic.WebView.convertFileSrc(this.profileService.profile.musicUrl);
+    if (this.platformService.isAndroid()) {
+      this.audioElement.src = this.platformService.convertFileSrc(this.profileService.profile.musicUrl);
     } else {
       this.audioElement.src = this.profileService.profile.musicUrl;
     }
@@ -44,8 +46,8 @@ export class BackgroundMusicService {
 
   refreshMusic() {
     if (!(this.audioElement.src === this.profileService.profile.musicUrl)) {
-      if (!!(window as any).cordova) {
-        this.audioElement.src = (window as any).Ionic.WebView.convertFileSrc(this.profileService.profile.musicUrl);
+      if (this.platformService.isAndroid()) {
+        this.audioElement.src = this.platformService.convertFileSrc(this.profileService.profile.musicUrl);
       } else {
         this.audioElement.src = this.profileService.profile.musicUrl;
       }

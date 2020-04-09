@@ -11,6 +11,7 @@ import {DateHelper} from '../services/date.helper';
 import {MalaPage} from './mala/mala.page';
 import {LyricsPage} from './lyrics/lyrics.page';
 import {LyricsService} from '../services/lyrics.service';
+import {PlatformService} from '../services/platform.service';
 
 @Component({
   selector: 'app-player',
@@ -54,6 +55,7 @@ export class PlayerPage implements AfterViewInit {
               private modalController: ModalController,
               private bgMusic: BackgroundMusicService,
               private lyricsService: LyricsService,
+              private platformService: PlatformService,
               public sessionService: SessionService,
               public notification: NotificationService,
               public profileService: ProfileService) {
@@ -108,8 +110,8 @@ export class PlayerPage implements AfterViewInit {
       } else {
         this.presentLoading();
         this.notification.resetInterval();
-        if (!!(window as any).cordova) {
-          this.audioElement.src = (window as any).Ionic.WebView.convertFileSrc(session.url);
+        if (this.platformService.isAndroid()) {
+          this.audioElement.src = this.platformService.convertFileSrc(session.url);
         } else {
           this.audioElement.src = session.url;
         }
@@ -166,6 +168,10 @@ export class PlayerPage implements AfterViewInit {
   changeSessionListOrder() {
     this.sessionService.toggleOrder();
     this.refreshDocuments();
+  }
+
+  isPaused(): boolean {
+    return this.audioElement.paused;
   }
 
   play() {
@@ -264,10 +270,23 @@ export class PlayerPage implements AfterViewInit {
       this.lyricsService.title = this.currentSession.name;
       this.lyricsService.content = content;
       if (!this.lyricsService.dialog) {
-        this.modalController.create({component: LyricsPage}).then(modal => {
+        this.modalController.create({
+          component: LyricsPage,
+          cssClass: 'lyrics-modal',
+          componentProps: {
+            isPausedFunction: () => this.isPaused(),
+            playFunction: () => this.play(),
+            pauseFunction: () => this.pause(),
+            prevFunction: () => this.previous(),
+            nextFunction: () => this.next()
+          }
+        }).then(modal => {
           modal.present();
           this.lyricsService.dialog = modal;
         });
+      } else if (document.getElementsByClassName('lyrics-modal').length === 0) {
+        this.lyricsService.dialog = null;
+        this.openLyrics();
       }
     }).catch(e => console.error(e));
   }
@@ -316,7 +335,7 @@ export class PlayerPage implements AfterViewInit {
         message: 'Please Wait...',
         mode: 'ios'
       }).then(modal => {
-        setTimeout(() => this.dismissLoading(), 8000);
+        setTimeout(() => this.dismissLoading(), 4000);
         modal.present();
         return modal;
       });

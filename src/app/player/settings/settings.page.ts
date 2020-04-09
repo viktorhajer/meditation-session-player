@@ -6,6 +6,9 @@ import {NotificationService} from '../../services/notification.service';
 import {HELP} from '../../models/help.model';
 import {SessionService} from '../../services/session.service';
 import {Session} from '../../models/session.model';
+import {FileChooser} from '@ionic-native/file-chooser/ngx';
+import {File as NativeFile} from '@ionic-native/file/ngx';
+import {FilePath} from '@ionic-native/file-path/ngx';
 
 @Component({
   selector: 'app-settings-page',
@@ -33,6 +36,9 @@ export class SettingsPage {
   initialized = false;
 
   constructor(private modalCtrl: ModalController,
+              private fileChooser: FileChooser,
+              private filePath: FilePath,
+              private file: NativeFile,
               private notification: NotificationService,
               private alertController: AlertController,
               public profileService: ProfileService,
@@ -166,6 +172,22 @@ export class SettingsPage {
 
   close() {
     this.modalCtrl.dismiss();
+  }
+
+  openFileChooser() {
+    this.fileChooser.open()
+      .then(uri => this.filePath.resolveNativePath(uri))
+      .then(path => {
+        const fullPath = path.substring(0, path.lastIndexOf('/'));
+        const parentPath = fullPath.substring(0, fullPath.lastIndexOf('/'));
+        const dirName = fullPath.substring(fullPath.lastIndexOf('/') + 1);
+
+        return this.file.listDir(parentPath, dirName);
+      })
+      .then(entries => {
+        entries.filter(e => e.isFile).forEach(e => console.log(e.name));
+      })
+      .catch(e => console.log(e));
   }
 
   private fillSettingsForm() {

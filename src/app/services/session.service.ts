@@ -2,17 +2,17 @@ import {Injectable} from '@angular/core';
 import {Session} from '../models/session.model';
 import {ProfileService} from './profile.service';
 import {File as NativeFile} from '@ionic-native/file/ngx';
+import {PlatformService} from './platform.service';
 
 @Injectable({providedIn: 'root'})
 export class SessionService {
 
   private orderAsc = true;
   private cache: Session[] = [];
-  private hasCordova = false;
 
   constructor(private profileService: ProfileService,
+              private platformService: PlatformService,
               private file: NativeFile) {
-    this.hasCordova = !!(window as any).cordova;
   }
 
   private static resetFlags(sessions: Session[]) {
@@ -26,7 +26,7 @@ export class SessionService {
 
   getSessions(): Promise<Session[]> {
     return (this.cache.length ? Promise.resolve(this.cache) :
-      (this.hasCordova ? this.readFolder() :
+      (this.platformService.isAndroid() ? this.readFolder() :
         Promise.resolve([
           new Session({name: 'Open_The_Window_Of Your Heart - Meditation.mp3', url: '/assets/example.mp3', lyrics: true}),
           new Session({name: '1Meditation To Improve.mp3', url: '/assets/ringTones/china-bell-ring.mp3', lyrics: true}),
@@ -51,9 +51,9 @@ export class SessionService {
   }
 
   readLyrics(session: Session): Promise<string> {
-    if (session.lyrics && this.hasCordova) {
+    if (session.lyrics && this.platformService.isAndroid()) {
       return this.file.readAsText(this.file.externalRootDirectory + 'Download/medi', session.name.replace('.mp3', '.srt'));
-    } else if (!this.hasCordova) {
+    } else if (!this.platformService.isAndroid()) {
       return Promise.resolve('<h1>ŚRĪ DĪPa DAYĀL KRIPĀL MAHĀPRABHU</h1>' +
         '\n' +
         '<h2>ŚRĪ DĪPa DAYĀL KRIPĀL MAHĀPRABHU\nĀP RĀKHO LĀJ HAMĀRĪ HĒ</h2>' +

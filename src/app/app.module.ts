@@ -9,6 +9,8 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {File} from '@ionic-native/file/ngx';
+import {FileChooser} from '@ionic-native/file-chooser/ngx';
+import {FilePath} from '@ionic-native/file-path/ngx';
 
 
 @NgModule({
@@ -19,7 +21,7 @@ import {File} from '@ionic-native/file/ngx';
     StatusBar,
     SplashScreen,
     Vibration,
-    File,
+    File, FileChooser, FilePath,
     {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
   ],
   bootstrap: [AppComponent]

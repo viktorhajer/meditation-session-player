@@ -1,6 +1,18 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="prevFunction()">
+        <ion-icon color="light" name="play-skip-back"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" (click)="playFunction()" *ngIf="isPausedFunction()">
+        <ion-icon color="light" name="play"></ion-icon>
+      </ion-button>
+        <ion-button fill="clear" (click)="pauseFunction()" *ngIf="!isPausedFunction()">
+          <ion-icon color="light" name="pause"></ion-icon>
+        </ion-button>
+      <ion-button fill="clear" (click)="nextFunction()">
+        <ion-icon color="light" name="play-skip-forward"></ion-icon>
+      </ion-button>
       <ion-button (click)="toggleSize()">
         <ion-icon color="light" name="search-circle"></ion-icon>
       </ion-button>

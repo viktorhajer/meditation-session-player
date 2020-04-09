@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {LyricsService} from '../../services/lyrics.service';
 
@@ -9,6 +9,11 @@ import {LyricsService} from '../../services/lyrics.service';
 })
 export class LyricsPage {
 
+  @Input() isPausedFunction: () => boolean;
+  @Input() playFunction: () => void;
+  @Input() pauseFunction: () => void;
+  @Input() prevFunction: () => void;
+  @Input() nextFunction: () => void;
   bigSize = false;
 
   constructor(private modalCtrl: ModalController,
