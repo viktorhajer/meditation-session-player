@@ -23,6 +23,7 @@ export class SettingsPage {
   timerEnabled: boolean;
   timerRepeated: boolean;
   timerPeriods: string;
+  timerAfterAction: number;
   musicEnabled: boolean;
   musicUrl: string;
   musicVolume: number;
@@ -81,6 +82,11 @@ export class SettingsPage {
   changedTimerRepeated() {
     this.profileService.setTimerRepeated(this.timerRepeated);
   }
+
+  changedTimerAfterAction() {
+    this.profileService.setTimerAfterAction(this.timerAfterAction);
+  }
+
 
   changedMusicEnabled() {
     this.profileService.setMusicEnabled(this.musicEnabled);
@@ -185,9 +191,8 @@ export class SettingsPage {
         return this.file.listDir(parentPath, dirName);
       })
       .then(entries => {
-        entries.filter(e => e.isFile).forEach(e => console.log(e.name));
-      })
-      .catch(e => console.log(e));
+        // entries.filter(e => e.isFile).forEach(e => console.log(e.name));
+      });
   }
 
   private fillSettingsForm() {
@@ -206,5 +211,6 @@ export class SettingsPage {
     this.selectedProfile = this.profileService.profile.name;
     this.malaEnabled = this.profileService.profile.malaEnabled;
     this.malaBeads = this.profileService.profile.malaBeads;
+    this.timerAfterAction = this.profileService.profile.timerAfterAction;
   }
 }

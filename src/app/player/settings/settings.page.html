@@ -71,6 +71,15 @@
       <ion-label></ion-label>
       <p class="timer-periods">{{timerPeriods}}</p>
     </ion-item>
+    <ion-item>
+      <ion-label>After action</ion-label>
+      <ion-select [(ngModel)]="timerAfterAction" (ionChange)="changedTimerAfterAction()" interface="popover">
+        <ion-select-option [value]="0">Do nothing</ion-select-option>
+        <ion-select-option [value]="1">Stop song</ion-select-option>
+        <ion-select-option [value]="2">Next song</ion-select-option>
+        <ion-select-option [value]="3">Previous song</ion-select-option>
+      </ion-select>
+    </ion-item>
 
     <ion-list-header color="medium">Background Music</ion-list-header>
     <ion-item>

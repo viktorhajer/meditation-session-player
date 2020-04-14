@@ -16,6 +16,7 @@ export class ProfileModel {
     public timerEnabled = false,
     public timerRepeated = false,
     public timerPeriods = [60],
+    public timerAfterAction = 0,
     public musicEnabled = false,
     public musicUrl = '',
     public musicVolume = 50,

@@ -132,6 +132,11 @@ export class ProfileService {
     this.saveProfile();
   }
 
+  setTimerAfterAction(value = 0) {
+    this.profile.timerAfterAction = value;
+    this.saveProfile();
+  }
+
   setMusicEnabled(enabled = true) {
     this.profile.musicEnabled = enabled;
     this.saveProfile();

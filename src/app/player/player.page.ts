@@ -64,6 +64,7 @@ export class PlayerPage implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.notification.setActions(() => this.stop(), () => this.next(), () => this.previous());
     this.notification.setAudioElement(this.ringingElementRef.nativeElement as HTMLAudioElement);
     this.bgMusic.setAudioElement(this.musicElementRef.nativeElement as HTMLAudioElement);
 
@@ -97,6 +98,10 @@ export class PlayerPage implements AfterViewInit {
 
   getSessions(): Session[] {
     return this.organizeMod ? this.sessions : this.sessions.filter(s => !s.hidden);
+  }
+
+  stop() {
+    this.openSession(this.currentSession);
   }
 
   openSession(session: Session) {

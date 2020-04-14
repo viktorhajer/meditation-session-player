@@ -4,6 +4,7 @@ import {ProfileService, RING_TONE_LIST} from './profile.service';
 import {NotificationType} from '../models/notification.model';
 import {Vibration} from '@ionic-native/vibration/ngx';
 import {DateHelper} from './date.helper';
+import {TimerAction} from '../models/timer-action.model';
 
 @Injectable({providedIn: 'root'})
 export class NotificationService {
@@ -12,10 +13,15 @@ export class NotificationService {
   private timer: number;
   private timerStarted = 0;
   private timerIndex = 0;
+  private actions: {stop: () => void, next: () => void, prev: () => void};
   countdownText = '';
 
   constructor(private profileService: ProfileService,
               private vibration: Vibration) {
+  }
+
+  setActions(stop: () => void, next: () => void, prev: () => void) {
+    this.actions = {stop, next, prev};
   }
 
   setAudioElement(audioElement: HTMLAudioElement) {
@@ -45,6 +51,7 @@ export class NotificationService {
         if (this.profileService.profile.timerRepeated) {
           this.startInterval();
         }
+        this.doAction();
       }
     }
   }
@@ -92,6 +99,18 @@ export class NotificationService {
   vibrateNotification(enabled = true, sequence = [1000]) {
     if (enabled && this.isVibrationTypeEnabled()) {
       this.vibration.vibrate(sequence);
+    }
+  }
+
+  private doAction() {
+    if (this.actions) {
+      if (this.profileService.profile.timerAfterAction === TimerAction.STOP) {
+        this.actions.stop();
+      } else if (this.profileService.profile.timerAfterAction === TimerAction.NEXT) {
+        this.actions.next();
+      } else if (this.profileService.profile.timerAfterAction === TimerAction.PREV) {
+        this.actions.prev();
+      }
     }
   }
 
