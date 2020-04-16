@@ -62,6 +62,9 @@
         <ion-icon color="secondary" name="bookmark" *ngIf="session.liked"></ion-icon>
         <ion-icon name="bookmark-outline" *ngIf="!session.liked"></ion-icon>
       </ion-col>
+      <ion-col size="1" class="ion-justify-content-start" *ngIf="!organizeMod && isLyricsAvailable(session)">
+        <ion-icon name="document-text-outline" (click)="openLyrics(session)" ></ion-icon>
+      </ion-col>
       <ion-col size="1" class="ion-justify-content-start" (click)="hideSession(session)" *ngIf="organizeMod">
         <ion-icon name="eye-outline" *ngIf="!session.hidden"></ion-icon>
         <ion-icon name="eye-off-outline" *ngIf="session.hidden"></ion-icon>

@@ -266,19 +266,28 @@ export class PlayerPage implements AfterViewInit {
     this.profileService.setProfile(name);
   }
 
-  isLyricsAvailable(): boolean {
-    return !!this.currentSession && !!this.currentSession.lyrics;
+  isLyricsAvailable(session?: Session): boolean {
+    if (!session) {
+      session = this.currentSession;
+    }
+    return !!session && !!session.lyrics;
   }
 
-  openLyrics() {
-    this.sessionService.readLyrics(this.currentSession).then(content => {
-      this.lyricsService.title = this.currentSession.name;
+  openLyrics(session?: Session) {
+    let hideToolbar = true;
+    if (!session) {
+      session = this.currentSession;
+      hideToolbar = false;
+    }
+    this.sessionService.readLyrics(session).then(content => {
+      this.lyricsService.title = session.name;
       this.lyricsService.content = content;
       if (!this.lyricsService.dialog) {
         this.modalController.create({
           component: LyricsPage,
           cssClass: 'lyrics-modal',
           componentProps: {
+            hideToolbar,
             isPausedFunction: () => this.isPaused(),
             playFunction: () => this.play(),
             pauseFunction: () => this.pause(),

@@ -9,6 +9,7 @@ import {LyricsService} from '../../services/lyrics.service';
 })
 export class LyricsPage {
 
+  @Input() hideToolbar: boolean;
   @Input() isPausedFunction: () => boolean;
   @Input() playFunction: () => void;
   @Input() pauseFunction: () => void;
