@@ -60,7 +60,7 @@ export class SessionService {
         '<b>DĪNANĀTHA ANĀTHA KE NĀTHA PRABHUJĪ\nPĀRABRAHMA AVATĀRĪ HĒ</b>\n' +
         '\n' +
         'VYĀPAKA VISVA CARĀCARA MĒ HARI\nCETANA JOT TUMHĀRĪ HĒ\n' +
-        'NIRGUNA SE SURGUNA BANA ĀYE\nBHAKTANA KE HITAKĀRĪ HĒ');
+        '<p class="small">NIRGUNA SE SURGUNA BANA ĀYE\nBHAKTANA KE HITAKĀRĪ HĒ</p>');
     }
     return Promise.resolve('');
   }
