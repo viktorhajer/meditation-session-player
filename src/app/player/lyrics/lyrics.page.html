@@ -16,10 +16,16 @@
       <ion-button (click)="toggleSize()">
         <ion-icon color="light" name="search-circle"></ion-icon>
       </ion-button>
+      <ion-button (click)="toggleTranslation()">
+        <ion-icon color="light" name="reader-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-buttons slot="start" *ngIf="hideToolbar">
       <ion-button (click)="toggleSize()">
         <ion-icon color="light" name="search-circle"></ion-icon>
+      </ion-button>
+      <ion-button (click)="toggleTranslation()">
+        <ion-icon color="light" name="reader-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title color="light">{{lyricsService.title}}</ion-title>
@@ -31,5 +37,5 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <pre [class.big]="bigSize" [innerHTML]="lyricsService.content"></pre>
+  <pre [class.big]="bigSize" [innerHTML]="lyricsService.content" [class.with-hun]="showTranslation"></pre>
 </ion-content>

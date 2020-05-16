@@ -16,6 +16,7 @@ export class LyricsPage {
   @Input() prevFunction: () => void;
   @Input() nextFunction: () => void;
   bigSize = false;
+  showTranslation = false;
 
   constructor(private modalCtrl: ModalController,
               public lyricsService: LyricsService) {
@@ -23,6 +24,10 @@ export class LyricsPage {
 
   toggleSize() {
     this.bigSize = !this.bigSize;
+  }
+
+  toggleTranslation() {
+    this.showTranslation = !this.showTranslation;
   }
 
   close() {
