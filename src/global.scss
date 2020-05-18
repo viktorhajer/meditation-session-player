@@ -53,12 +53,17 @@ pre {
       font-size: 1.4rem;
       line-height: 1.8rem;
     }
+    .small {
+      font-size: 0.8rem;
+      line-height: 0.95rem;
+    }
   }
   .small {
     font-size: 0.65rem;
     margin: 0;
     padding: 0;
     color: #aaa;
+    line-height: 0.95rem;
   }
   .hun {
     display: none;

@@ -16,7 +16,7 @@
       <ion-button (click)="toggleSize()">
         <ion-icon color="light" name="search-circle"></ion-icon>
       </ion-button>
-      <ion-button (click)="toggleTranslation()">
+      <ion-button (click)="toggleTranslation()" *ngIf="isTranslatorDisplayed()">
         <ion-icon color="light" name="reader-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -24,7 +24,7 @@
       <ion-button (click)="toggleSize()">
         <ion-icon color="light" name="search-circle"></ion-icon>
       </ion-button>
-      <ion-button (click)="toggleTranslation()">
+      <ion-button (click)="toggleTranslation()" *ngIf="isTranslatorDisplayed()">
         <ion-icon color="light" name="reader-outline"></ion-icon>
       </ion-button>
     </ion-buttons>

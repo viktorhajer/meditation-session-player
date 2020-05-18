@@ -59,7 +59,7 @@ export class SessionService {
         '<h2>ŚRĪ DĪPa DAYĀL KRIPĀL MAHĀPRABHU\nĀP RĀKHO LĀJ HAMĀRĪ HĒ</h2>' +
         '<b>DĪNANĀTHA ANĀTHA KE NĀTHA PRABHUJĪ\nPĀRABRAHMA AVATĀRĪ HĒ</b>\n' +
         '\n' +
-        'VYĀPAKA VISVA CARĀCARA MĒ HARI\nCETANA JOT TUMHĀRĪ HĒ<p class="small hun">Vezess mineket a valótlanságból a <br/>valóságba</p>\n' +
+        'VYĀPAKA VISVA CARĀCARA MĒ HARI\nCETANA JOT TUMHĀRĪ HĒ<p class="hun small">Vezess mineket a valótlanságból a <br/>valóságba</p>\n' +
         '\n' +
         'VYĀPAKA VISVA CARĀCARA MĒ HARI\nCETANA JOT TUMHĀRĪ HĒ\n' +
         '<p class="small">Vezess mineket a valótlanságból a valóságba</p>');

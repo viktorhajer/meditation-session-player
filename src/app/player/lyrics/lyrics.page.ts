@@ -22,6 +22,10 @@ export class LyricsPage {
               public lyricsService: LyricsService) {
   }
 
+  isTranslatorDisplayed(): boolean {
+    return this.lyricsService.content.indexOf('hun') !== -1;
+  }
+
   toggleSize() {
     this.bigSize = !this.bigSize;
   }
